@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold "Name=ConnectionStrings:connection" Microsoft.EntityFrameworkCore.SqlServer -o Models --force
