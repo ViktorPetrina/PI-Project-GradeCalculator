@@ -2,6 +2,6 @@
 {
     public interface ILogService
     {
-        void AddLog(string message);
+         void Log(string opis);
     }
 }
