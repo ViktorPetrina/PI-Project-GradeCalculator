@@ -32,8 +32,6 @@ public partial class PiGradeCalculatorContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.UseCollation("Croatian_CI_AS");
-
         modelBuilder.Entity<Godina>(entity =>
         {
             entity.HasKey(e => e.Idgodina).HasName("PK__Godina__C94F992DC64DD7B5");
