@@ -13,7 +13,7 @@ go
 create table Korisnik (
     IDKorisnik int primary key identity (1, 1),
     KorisnickoIme nvarchar(50) unique not null,
-    EPosta varchar(50) not null,
+    EPosta varchar(50) unique not null,
     LozinkaHash nvarchar(255) not null,
 	LozinkaSalt nvarchar(255) not null,
 	UkupnaOcjena float default 0 not null,

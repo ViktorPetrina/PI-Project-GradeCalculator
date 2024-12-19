@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<PiGradeCalculatorContext>(options => {
     options.UseSqlServer("name=ConnectionStrings:connection");
 });
-builder.Services.AddScoped<ILogService,LogService>();
+builder.Services.AddScoped<StatistikaService>();
 
 var app = builder.Build();
 
