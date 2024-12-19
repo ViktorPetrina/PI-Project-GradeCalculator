@@ -1,5 +1,6 @@
 ﻿
 using GradeCalculator.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,10 +17,10 @@ namespace GradeCalculator.Service
 
         public double KalkulacijaProsjeka(int id)
         {
-             var ocjene = _context.Godinas
-                .Where(o=> o.KorisnikId==id)
-                .Select(o=> (double)o.Prosjek)
+             var ocjene = _context.Korisniks
+                .Select(o=>o.UkupnaOcjena)
                 .ToList();
+
             if (ocjene.IsNullOrEmpty() && !ocjene.Any())
             {
                 return 0;
@@ -29,23 +30,17 @@ namespace GradeCalculator.Service
 
         public Dictionary<int,double> KalkulacijaUkupnihProsjeka()
         {
+            int brojOcjena = _context.Korisniks.Count();
+
+            var ocjenePercentage = _context.Korisniks
+                .GroupBy(o => (int)Math.Round(o.UkupnaOcjena, MidpointRounding.AwayFromZero))
+                .ToDictionary(
+                    o => o.Key,
+                    o => Math.Round((o.Count() / (double)brojOcjena) * 100, 2) 
+                     );
+            return ocjenePercentage;
+
             
-
-            var ocjene = _context.Godinas
-                .Select(o=>Math.Round((double)o.Prosjek))
-                .ToList();
-
-
-            if (ocjene.IsNullOrEmpty() && !ocjene.Any())
-            {
-                throw new Exception("Prosjeci su prazni");
-            }
-
-
-            int brojOcjena = ocjene.Count();
-
-            Dictionary<int, double> ocjenePercentage = ocjene
-                //Dovrsi da se vrati dictionary sa ocjenama <ocjena, postotak>
         }
     }
 }
