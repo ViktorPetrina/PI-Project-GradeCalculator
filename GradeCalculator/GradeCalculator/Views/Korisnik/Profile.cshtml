@@ -1,0 +1,168 @@
+﻿@model GradeCalculator.ViewModels.KorisnikVM
+
+<div id="profilePlaceholder" class="details">
+    <partial name="_ProfilePartial"></partial>
+
+    <button id="ajaxUpdate" hidden class="btn btn-primary mt-3">Refresh</button>
+    <button id="ajaxEdit" class="btn btn-primary">Edit</button>
+    <button id="ajaxChangePassword" class="btn btn-warning">Change password</button>
+    <a id="return" type="button" class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to List</a>
+</div>
+
+<div class="modal fade" id="AjaxEditModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <div class="mb-3">
+                        <label for="UserNameInput" class="form-label">Korisničko ime</label>
+                        <input id="UserNameInput" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="EmailInput" class="form-label">E-pošta</label>
+                        <input id="EmailInput" class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="SaveProfileButton" type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AjaxChangePasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Promijeni lozinku</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <div class="mb-3">
+                        <label for="NewPasswordInput" class="form-label">Nova lozinka</label>
+                        <input id="NewPasswordInput" class="form-control" type="password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="ConfirmPasswordInput" class="form-label">Potvrdi lozinku</label>
+                        <input id="ConfirmPasswordInput" class="form-control" type="password">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="SavePasswordButton" type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        const modelId = "@Model.Id";
+
+        $("#ajaxUpdate").click(() => {
+            $.ajax({
+                url: `/Korisnik/GetProfileData/${modelId}`,
+                method: "GET"
+            })
+                .done((data) => {
+                    $("#UserName").text(data.userName);
+                    $("#Email").text(data.eposta);
+                    $("#TotalGrade").text(data.ukupnaOcjena);
+                });
+        });
+
+        const ajaxEditModalEl = $("#AjaxEditModal")[0];
+        const ajaxEditModal = new bootstrap.Modal(ajaxEditModalEl);
+
+        $("#ajaxEdit").click((e) => {
+            e.preventDefault();
+
+            const username = $("#UserName").text().trim();
+            const email = $("#Email").text().trim();
+
+            $("#EmailInput").val(email);
+            $("#UserNameInput").val(username);
+
+            ajaxEditModal.show();
+        });
+
+        $("#SaveProfileButton").click(() => {
+
+            const profile = {
+                email: $("#EmailInput").val(),
+                userName: $("#UserNameInput").val(),
+            };
+
+            $.ajax({
+                url: `/Korisnik/SetProfileData/${modelId}`,
+                method: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(profile)
+            })
+                .done((data) => {
+                    ajaxEditModal.hide();
+                    $("#ajaxUpdate").trigger("click");
+                })
+                .fail(() => {
+                    alert("Couldn't update profile");
+                })
+        });
+
+        const passwordModalEl = $("#AjaxChangePasswordModal")[0];
+        const passwordModal = new bootstrap.Modal(passwordModalEl);
+
+        $("#ajaxChangePassword").click((e) => {
+            e.preventDefault();
+
+            $("#NewPasswordInput").val("");
+            $("#ConfirmPasswordInput").val("");
+
+            passwordModal.show();
+        });
+
+        $("#SavePasswordButton").click(() => {
+            const passwordData = {
+                newPassword: $("#NewPasswordInput").val(),
+                confirmPassword: $("#ConfirmPasswordInput").val(),
+            };
+
+            if (!passwordData.newPassword || !passwordData.confirmPassword) {
+                alert("All fields are required.");
+                return;
+            }
+
+            if (passwordData.newPassword.length < 8) {
+                alert("New password must be at least 8 characters long.");
+                return;
+            }
+
+            if (passwordData.newPassword !== passwordData.confirmPassword) {
+                alert("Passwords don't match.");
+                return;
+            }
+
+            $.ajax({
+                url: `/Korisnik/ChangePassword/${modelId}`,
+                method: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(passwordData)
+            })
+                .done((data) => {
+                    passwordModal.hide();
+                })
+                .fail(() => {
+                    alert("Couldn't change password");
+                })
+        });
+
+    </script>
+}
