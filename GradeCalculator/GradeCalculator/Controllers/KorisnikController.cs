@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using GradeCalculator.ViewModels;
 using NuGet.Protocol;
 using System.Diagnostics;
-using System.Configuration;
 
 namespace GradeCalculator.Controllers
 {
@@ -55,68 +54,6 @@ namespace GradeCalculator.Controllers
             return View(userVm);
         }
 
-        public ActionResult Profile()
-        {
-            //var username = HttpContext.User.Identity.Name;
-            var username = "pero";
-
-            var user = _context.Korisniks
-                .Include(r => r.Uloga)
-                .FirstOrDefault(r => r.KorisnickoIme == username);
-            if (user == null)
-            {
-                return NotFound($"Could not find user you're looking for");
-            }
-
-            var userVm = new KorisnikVM
-            {
-                Id = user.Idkorisnik,
-                UserName = user.KorisnickoIme,
-                Email = user.Eposta,
-                TotalGrade = user.UkupnaOcjena
-            };
-
-            return View(userVm);
-        }
-
-        public JsonResult GetProfileData(int id)
-        {
-            var user = _context.Korisniks
-                .Include(p => p.Uloga)
-                .First(p => p.Idkorisnik == id);
-            return Json(new
-            {
-                user.KorisnickoIme,
-                user.Eposta,
-                user.UkupnaOcjena
-            });
-        }
-
-        [HttpPut]
-        public ActionResult SetProfileData(int id, [FromBody] KorisnikVM userVm)
-        {
-            var user = _context.Korisniks.First(p => p.Idkorisnik == id);
-            user.Eposta = userVm.Email;
-            user.KorisnickoIme = userVm.UserName;
-
-            _context.SaveChanges();
-
-            return Ok();
-        }
-
-        [HttpPut]
-        public ActionResult ChangePassword(int id, [FromBody] ChangePasswordVM passwordVm)
-        {
-            var user = _context.Korisniks.First(p => p.Idkorisnik == id);
-
-            user.LozinkaSalt = PasswordProvider.GetSalt();
-            user.LozinkaHash = PasswordProvider.GetHash(passwordVm.NewPassword, user.LozinkaSalt);
-
-            _context.SaveChanges();
-
-            return Ok();
-        }
-
         // GET: KorisnikController/Create
         public ActionResult Create()
         {
@@ -132,6 +69,10 @@ namespace GradeCalculator.Controllers
             {
                 if (!ModelState.IsValid)
                 {
+                    foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        Console.WriteLine(error.ErrorMessage);
+                    }
                     return View();
                 }
 
