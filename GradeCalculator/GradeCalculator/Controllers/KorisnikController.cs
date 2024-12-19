@@ -1,6 +1,8 @@
-﻿using GradeCalculator.Security;
+﻿using GradeCalculator.Models;
+using GradeCalculator.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace GradeCalculator.Controllers
 {
@@ -79,6 +81,16 @@ namespace GradeCalculator.Controllers
             {
                 return View();
             }
+        }
+        //GET: KorisnikController/StatisticsGet()
+        public ActionResult StatisticsGet()
+        {
+            List<DataPoint> dataPoints = new List<DataPoint>();
+            //Add datapoints
+
+            ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoints);
+
+            return View();
         }
     }
 }
