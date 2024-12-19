@@ -1,4 +1,5 @@
 using GradeCalculator.Models;
+using GradeCalculator.Security;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

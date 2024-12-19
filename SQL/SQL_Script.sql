@@ -56,3 +56,12 @@ values
 ('korisnik'),
 ('admin');
 go
+
+insert into Korisnik (KorisnickoIme, EPosta, LozinkaHash, LozinkaSalt, UlogaID)
+values 
+('pero', 'pp@gmail.com', 'RvG97AOUBIEa5uIry4X2C2mNpPRjnnKlzeMJVLwdxYY=', 'yzh77hIWxfB1QD5xaGRILA==', 1),
+('viki', 'vpetrina@algebra.hr', '/uZ8jT1CFtFYZl4ekPrpZD8aDH8Y10fCjvFmj4dNAqA=', 'BvsheJUW9SAT3qThbECW/w==', 1),
+('mico', 'mvukusic@algebra.hr', 'QyGAo7ThZ0qraoxKWlkEwNdTbMOI+Edg1O4QAU3P5V0=', 'JIVCnXlad/nfiluhB0Bt5g==', 1),
+('miki', 'mjurela@algebra.hr', 'z9jPxckOlhXLDrswPa6LGX+ZcWRMUQNym+JNAJBHRTw=', '01yQE0ZAT/vooUx3ohzOvA==', 1),
+('sudo', 'superUser@do.com', 'Z0a6GCPtblAibhYVdDtIXxQadWf0Jg8/ygKUEix+Esg=', '/zL7svjOhTgRAeJxMIgcNQ==', 2);
+go
