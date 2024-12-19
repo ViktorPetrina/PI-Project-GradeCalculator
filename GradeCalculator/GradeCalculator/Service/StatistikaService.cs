@@ -1,5 +1,6 @@
 ﻿
 using GradeCalculator.Models;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Microsoft.IdentityModel.Tokens;
 
 namespace GradeCalculator.Service
@@ -29,6 +30,22 @@ namespace GradeCalculator.Service
         public Dictionary<int,double> KalkulacijaUkupnihProsjeka()
         {
             
+
+            var ocjene = _context.Godinas
+                .Select(o=>Math.Round((double)o.Prosjek))
+                .ToList();
+
+
+            if (ocjene.IsNullOrEmpty() && !ocjene.Any())
+            {
+                throw new Exception("Prosjeci su prazni");
+            }
+
+
+            int brojOcjena = ocjene.Count();
+
+            Dictionary<int, double> ocjenePercentage = ocjene
+                //Dovrsi da se vrati dictionary sa ocjenama <ocjena, postotak>
         }
     }
 }
