@@ -82,12 +82,11 @@ namespace GradeCalculator.Controllers
                 return View();
             }
         }
-        //GET: KorisnikController/StatisticsGet()
+        //GET: KorisnikController
         public ActionResult StatisticsGet()
         {
             List<DataPoint> dataPoints = new List<DataPoint>();
             //Add datapoints
-
             ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoints);
 
             return View();

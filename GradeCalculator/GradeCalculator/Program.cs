@@ -1,5 +1,6 @@
 using GradeCalculator.Models;
 using GradeCalculator.Security;
+using GradeCalculator.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<PiGradeCalculatorContext>(options => {
     options.UseSqlServer("name=ConnectionStrings:connection");
 });
+builder.Services.AddScoped<ILogService,LogService>();
 
 var app = builder.Build();
 
