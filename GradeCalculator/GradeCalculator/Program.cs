@@ -1,4 +1,6 @@
+using GradeCalculator.AutoMapper;
 using GradeCalculator.Models;
+using GradeCalculator.Repository;
 using GradeCalculator.Security;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +12,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<PiGradeCalculatorContext>(options => {
     options.UseSqlServer("name=ConnectionStrings:connection");
 });
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddScoped<IRepository<Predmet>, PredmetRepository>();
+builder.Services.AddScoped<IRepository<Godina> ,GodinaRepository>();
 
 var app = builder.Build();
 
