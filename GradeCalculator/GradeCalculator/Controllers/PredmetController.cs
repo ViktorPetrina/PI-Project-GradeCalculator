@@ -15,13 +15,14 @@ namespace GradeCalculator.Controllers
         private readonly IRepository<Godina> yearRepo;
         private readonly IMapper mapper;
         private readonly StatistikaService _statistikaService;
-
-        public PredmetController(IRepository<Predmet> _subjectRepo, IRepository<Godina> _yearRepo, IMapper _mapper, StatistikaService statistikaService)
+        private readonly LogService _logService;
+        public PredmetController(IRepository<Predmet> _subjectRepo, IRepository<Godina> _yearRepo, IMapper _mapper, StatistikaService statistikaService, LogService logService)
         {
             subjectRepo = _subjectRepo;
             yearRepo = _yearRepo;
             mapper = _mapper;
             _statistikaService = statistikaService;
+            _logService = logService;
         }
 
         // GET: PredmetController
@@ -48,7 +49,7 @@ namespace GradeCalculator.Controllers
             ViewBag.GodineListItems = GetYears();
 
             var subject = new PredmetVM();
-
+            
             return View(subject);
         }
 
@@ -68,7 +69,7 @@ namespace GradeCalculator.Controllers
 
                 var subject = mapper.Map<Predmet>(subjectVm);
                 subjectRepo.Add(subject);
-
+                _logService.AddLog("Korisnik spremio predmet u bazu.");
                 return RedirectToAction(nameof(Index));
             }
             catch
