@@ -8,11 +8,11 @@ namespace GradeCalculator.Models
     {
 
         [DataMember(Name = "label")]
-        public string Label = "";
+        public string Label { get; set; }
 
-        
+
         [DataMember(Name = "y")]
-        public Nullable<double> Y = null;
+        public double? Y { get; set; }
 
         public DataPoint(string label, double y)
         {

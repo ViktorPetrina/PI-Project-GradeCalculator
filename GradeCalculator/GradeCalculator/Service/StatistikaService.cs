@@ -33,6 +33,7 @@ namespace GradeCalculator.Service
             int brojOcjena = _context.Korisniks.Count();
 
             var ocjenePercentage = _context.Korisniks
+                .AsEnumerable()
                 .GroupBy(o => (int)Math.Round(o.UkupnaOcjena, MidpointRounding.AwayFromZero))
                 .ToDictionary(
                     o => o.Key,

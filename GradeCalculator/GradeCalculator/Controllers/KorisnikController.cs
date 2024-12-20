@@ -13,16 +13,20 @@ using GradeCalculator.ViewModels;
 using NuGet.Protocol;
 using System.Diagnostics;
 using System.Configuration;
+using GradeCalculator.Service;
+using Newtonsoft.Json;
 
 namespace GradeCalculator.Controllers
 {
     public class KorisnikController : Controller
     {
         private readonly PiGradeCalculatorContext _context;
+        private readonly StatistikaService _statistikaService;
 
-        public KorisnikController(PiGradeCalculatorContext context)
+        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService)
         {
             _context = context;
+            _statistikaService = statistikaService;
         }
 
         private const int REGULAR_USER_ID = 1;
@@ -30,6 +34,8 @@ namespace GradeCalculator.Controllers
         // GET: KorisnikController
         public ActionResult Index()
         {
+            
+
             return View();
         }
 
@@ -52,6 +58,7 @@ namespace GradeCalculator.Controllers
                 RoleId = user.UlogaId
             };
 
+            
             return View(userVm);
         }
 
@@ -100,7 +107,7 @@ namespace GradeCalculator.Controllers
             user.KorisnickoIme = userVm.UserName;
 
             _context.SaveChanges();
-
+            
             return Ok();
         }
 
@@ -210,6 +217,23 @@ namespace GradeCalculator.Controllers
             {
                 return View();
             }
+        }
+        // GET: 
+        public JsonResult GetDataPoints()
+        {
+            
+            var ocjene = _statistikaService.KalkulacijaUkupnihProsjeka();
+            List<DataPoint> dataPoints = new List<DataPoint>();
+
+            for (int i = 0; i <= 5; i++) 
+            {
+                double value = ocjene.ContainsKey(i) ? ocjene[i] : 0;
+                dataPoints.Add(new DataPoint(i.ToString(), value));
+            }
+            
+            
+   
+            return Json(dataPoints);
         }
     }
 }
