@@ -1,0 +1,122 @@
+﻿@model GradeCalculator.ViewModels.PredmetVM
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<style>
+        table {
+      border-collapse: collapse;
+      border: 2px solid rgb(140 140 140);
+      font-family: sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    caption {
+      caption-side: bottom;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    thead,
+    tfoot {
+      background-color: rgb(228 240 245);
+    }
+
+    th,
+    td {
+      border: 1px solid rgb(160 160 160);
+      padding: 8px 10px;
+    }
+
+    td:last-of-type {
+      text-align: center;
+    }
+
+    tbody > tr:nth-of-type(even) {
+      background-color: rgb(237 238 242);
+    }
+
+    tfoot th {
+      text-align: right;
+    }
+
+    tfoot td {
+      font-weight: bold;
+    }
+
+</style>
+
+<h1>Details</h1>
+
+<div>
+    <h4>PredmetVM</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Naziv)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Naziv)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Prosjek)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Prosjek)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GodinaId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GodinaId)
+        </dd>
+
+        <table>
+            <tbody>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>4</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>4</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>4</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>4</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>4</td>
+                    <td>2</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Idpredmet }, new { @class = "btn btn-outline-primary" }) |
+    <a asp-action="Index" class="btn btn-outline-primary">Back to List</a>
+</div>

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<GradeCalculator.ViewModels.PredmetVM>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Predmeti</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-outline-primary">Dodavanje predmeta</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Naziv)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Prosjek)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GodinaId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Naziv)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Prosjek)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GodinaId)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        @Html.ActionLink("Uredi", "Edit", new { id = item.Idpredmet }, new { @class = "btn btn-outline-primary" })
+                        @Html.ActionLink("Detalji", "Details", new { id = item.Idpredmet }, new { @class = "btn btn-outline-primary" })
+                        @Html.ActionLink("Brisanje", "Delete", new { id = item.Idpredmet }, new { @class = "btn btn-outline-danger" })
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
