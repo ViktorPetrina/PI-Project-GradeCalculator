@@ -2,6 +2,7 @@ using GradeCalculator.AutoMapper;
 using GradeCalculator.Models;
 using GradeCalculator.Repository;
 using GradeCalculator.Security;
+using GradeCalculator.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<PiGradeCalculatorContext>(options => {
     options.UseSqlServer("name=ConnectionStrings:connection");
 });
+builder.Services.AddScoped<StatistikaService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
