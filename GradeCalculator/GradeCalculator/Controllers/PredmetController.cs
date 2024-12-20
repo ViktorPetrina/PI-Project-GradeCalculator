@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GradeCalculator.Models;
 using GradeCalculator.Repository;
+using GradeCalculator.Service;
 using GradeCalculator.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,14 @@ namespace GradeCalculator.Controllers
         private readonly IRepository<Predmet> subjectRepo;
         private readonly IRepository<Godina> yearRepo;
         private readonly IMapper mapper;
+        private readonly StatistikaService _statistikaService;
 
-        public PredmetController(IRepository<Predmet> _subjectRepo, IRepository<Godina> _yearRepo, IMapper _mapper)
+        public PredmetController(IRepository<Predmet> _subjectRepo, IRepository<Godina> _yearRepo, IMapper _mapper, StatistikaService statistikaService)
         {
             subjectRepo = _subjectRepo;
             yearRepo = _yearRepo;
             mapper = _mapper;
+            _statistikaService = statistikaService;
         }
 
         // GET: PredmetController
@@ -144,6 +147,13 @@ namespace GradeCalculator.Controllers
                         Text = $"{y.Naziv}",
                         Value = y.Idgodina.ToString()
                     });
+        }
+        //GET: Predmet/UkupniProsjek
+        public JsonResult UkupniProsjek()
+        {
+            var ukupniProsjek = _statistikaService.KalkulacijaProsjeka();
+            return Json(ukupniProsjek);
+
         }
     }
 }

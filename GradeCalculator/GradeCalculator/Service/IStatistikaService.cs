@@ -3,7 +3,7 @@
     public interface IStatistikaService
     {
         //Kalkulira ukupni prosjek jednog korisnika
-        double KalkulacijaProsjeka(int id);
+        double KalkulacijaProsjeka();
         //Kalkulira ukupni prosjek svih prosjeka korisnika
         Dictionary<int, double> KalkulacijaUkupnihProsjeka();
     }

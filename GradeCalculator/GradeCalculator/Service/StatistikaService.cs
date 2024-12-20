@@ -15,7 +15,7 @@ namespace GradeCalculator.Service
             _context = context;
         }
 
-        public double KalkulacijaProsjeka(int id)
+        public double KalkulacijaProsjeka()
         {
              var ocjene = _context.Korisniks
                 .Select(o=>o.UkupnaOcjena)
