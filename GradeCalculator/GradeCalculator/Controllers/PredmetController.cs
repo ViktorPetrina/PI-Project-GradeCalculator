@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GradeCalculator.Models;
 using GradeCalculator.Repository;
+using GradeCalculator.Service;
 using GradeCalculator.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,15 @@ namespace GradeCalculator.Controllers
         private readonly IRepository<Predmet> subjectRepo;
         private readonly IRepository<Godina> yearRepo;
         private readonly IMapper mapper;
-
-        public PredmetController(IRepository<Predmet> _subjectRepo, IRepository<Godina> _yearRepo, IMapper _mapper)
+        private readonly StatistikaService _statistikaService;
+        private readonly LogService _logService;
+        public PredmetController(IRepository<Predmet> _subjectRepo, IRepository<Godina> _yearRepo, IMapper _mapper, StatistikaService statistikaService, LogService logService)
         {
             subjectRepo = _subjectRepo;
             yearRepo = _yearRepo;
             mapper = _mapper;
+            _statistikaService = statistikaService;
+            _logService = logService;
         }
 
         // GET: PredmetController
@@ -45,7 +49,7 @@ namespace GradeCalculator.Controllers
             ViewBag.GodineListItems = GetYears();
 
             var subject = new PredmetVM();
-
+            
             return View(subject);
         }
 
@@ -65,7 +69,7 @@ namespace GradeCalculator.Controllers
 
                 var subject = mapper.Map<Predmet>(subjectVm);
                 subjectRepo.Add(subject);
-
+                _logService.AddLog("Korisnik spremio predmet u bazu.");
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -144,6 +148,13 @@ namespace GradeCalculator.Controllers
                         Text = $"{y.Naziv}",
                         Value = y.Idgodina.ToString()
                     });
+        }
+        //GET: Predmet/UkupniProsjek
+        public JsonResult UkupniProsjek()
+        {
+            var ukupniProsjek = _statistikaService.KalkulacijaProsjeka();
+            return Json(ukupniProsjek);
+
         }
     }
 }

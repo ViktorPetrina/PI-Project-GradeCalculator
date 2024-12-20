@@ -5,10 +5,14 @@
 }
 
 <h1>Predmeti</h1>
+<div>
+    <label id="ukupniProsjekLabel"></label>
+</div>
 
 <p>
     <a asp-action="Create" class="btn btn-outline-primary">Dodavanje predmeta</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -48,3 +52,15 @@
         }
     </tbody>
 </table>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            
+            $.get('/Predmet/UkupniProsjek', function (response) {
+                
+                    $('#ukupniProsjekLabel').text("Ukupni Prosjek: " + response);
+                
+            })
+        });
+    </script>
+}

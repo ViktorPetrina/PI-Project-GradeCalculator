@@ -14,6 +14,7 @@ builder.Services.AddDbContext<PiGradeCalculatorContext>(options => {
     options.UseSqlServer("name=ConnectionStrings:connection");
 });
 builder.Services.AddScoped<StatistikaService>();
+builder.Services.AddScoped<LogService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

@@ -77,11 +77,11 @@ public partial class PiGradeCalculatorContext : DbContext
 
         modelBuilder.Entity<Log>(entity =>
         {
-            entity.HasKey(e => e.Idocjena).HasName("PK__Log__F9D97F28DF5F4016");
+            entity.HasKey(e => e.IdLog).HasName("PK__Log__F9D97F28DF5F4016");
 
             entity.ToTable("Log");
 
-            entity.Property(e => e.Idocjena).HasColumnName("IDOcjena");
+            entity.Property(e => e.IdLog).HasColumnName("IDOcjena");
             entity.Property(e => e.Opis).HasMaxLength(100);
             entity.Property(e => e.Vrijeme).HasColumnType("datetime");
         });
