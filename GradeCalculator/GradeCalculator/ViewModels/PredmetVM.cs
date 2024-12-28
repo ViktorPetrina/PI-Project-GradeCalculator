@@ -5,7 +5,6 @@ namespace GradeCalculator.ViewModels
 {
     public class PredmetVM
     {
-        // ovo maknuti kasnije - ne pokazujemo id-jeve
         [Display(Name = "ID")]
         public int Idpredmet { get; set; }
 

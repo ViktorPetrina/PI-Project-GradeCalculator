@@ -32,6 +32,6 @@
 
     <form asp-action="Delete">
         <input type="submit" value="Izbriši" class="btn btn-danger" /> |
-        <a asp-action="Index" class="btn btn-outline-primary">Nazad</a>
+        @Html.ActionLink("Nazad", "SubjectsByYear", new { id = Model.GodinaId }, new { @class = "btn btn-outline-primary" })
     </form>
 </div>

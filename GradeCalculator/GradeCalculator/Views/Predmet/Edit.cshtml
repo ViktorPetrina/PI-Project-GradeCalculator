@@ -29,7 +29,7 @@
             <br />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-outline-primary">Nazad</a>
+                @Html.ActionLink("Nazad", "SubjectsByYear", new { id = Model.GodinaId }, new { @class = "btn btn-outline-primary" })
             </div>
         </form>
     </div>

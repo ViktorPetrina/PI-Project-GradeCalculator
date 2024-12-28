@@ -12,12 +12,17 @@ namespace GradeCalculator.Repository
 
         public Godina? Add(Godina value)
         {
-            throw new NotImplementedException();
+            _context.Godinas.Add(value);
+            _context.SaveChanges();
+
+            return value;
         }
 
         public Godina? Get(int id)
         {
-            throw new NotImplementedException();
+            var years = _context.Godinas;
+
+            return years.FirstOrDefault(p => p.Idgodina == id);
         }
 
         public IEnumerable<Godina> GetAll()
@@ -27,12 +32,31 @@ namespace GradeCalculator.Repository
 
         public Godina? Modify(int id, Godina value)
         {
-            throw new NotImplementedException();
+            var year = Get(id);
+
+            if (year != null)
+            {
+                year.Naziv = value.Naziv;
+                year.Prosjek = value.Prosjek;
+                year.KorisnikId = value.KorisnikId;
+            }
+
+            _context.SaveChanges();
+
+            return year;
         }
 
         public Godina? Remove(int id)
         {
-            throw new NotImplementedException();
+            var year = Get(id);
+
+            if (year != null)
+            {
+                _context.Godinas.Remove(year);
+                _context.SaveChanges();
+            }
+
+            return year;
         }
     }
 }
