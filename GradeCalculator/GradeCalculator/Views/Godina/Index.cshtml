@@ -1,0 +1,44 @@
+﻿@model IEnumerable<GradeCalculator.ViewModels.GodinaVM>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Godine</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-outline-primary">Kreiraj godinu/semestar</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Naziv)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Prosjek)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Naziv)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Prosjek)
+            </td>
+            <td>
+                    <div class="btn-group">
+                        @Html.ActionLink("Predmeti", "Subjects", new { _id = item.Idgodina }, new { @class = "btn btn-outline-primary" })
+                        @Html.ActionLink("Pregled", "Details", new { id = item.Idgodina }, new { @class = "btn btn-outline-primary" })
+                        @Html.ActionLink("Brisanje", "Delete", new { id = item.Idgodina }, new { @class = "btn btn-outline-danger" })
+                    </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

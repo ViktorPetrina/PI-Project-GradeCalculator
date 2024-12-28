@@ -11,16 +11,21 @@ namespace GradeCalculator.Controllers
 {
     public class PredmetController : Controller
     {
-        private readonly IRepository<Predmet> subjectRepo;
-        private readonly IRepository<Godina> yearRepo;
-        private readonly IMapper mapper;
+        private readonly IRepository<Predmet> _subjectRepo;
+        private readonly IRepository<Godina> _yearRepo;
+        private readonly IMapper _mapper;
         private readonly StatistikaService _statistikaService;
         private readonly LogService _logService;
-        public PredmetController(IRepository<Predmet> _subjectRepo, IRepository<Godina> _yearRepo, IMapper _mapper, StatistikaService statistikaService, LogService logService)
+        public PredmetController(
+            IRepository<Predmet> subjectRepo, 
+            IRepository<Godina> yearRepo, 
+            IMapper mapper, 
+            StatistikaService statistikaService, 
+            LogService logService)
         {
-            subjectRepo = _subjectRepo;
-            yearRepo = _yearRepo;
-            mapper = _mapper;
+            _subjectRepo = subjectRepo;
+            _yearRepo = yearRepo;
+            _mapper = mapper;
             _statistikaService = statistikaService;
             _logService = logService;
         }
@@ -28,8 +33,19 @@ namespace GradeCalculator.Controllers
         // GET: PredmetController
         public ActionResult Index()
         {
-            var subjects = subjectRepo.GetAll();
-            var subjectVms = mapper.Map<IEnumerable<PredmetVM>>(subjects);
+            var subjects = _subjectRepo.GetAll();
+            var subjectVms = _mapper.Map<IEnumerable<PredmetVM>>(subjects);
+
+            return View(subjectVms);
+        }
+
+        // GET: PredmetController/SubjectsByYear/5
+        public ActionResult SubjectsByYear(int id)
+        {
+            var subjects = _subjectRepo.GetAll();
+            var subjectVms = _mapper.Map<IEnumerable<PredmetVM>>(subjects);
+
+            subjectVms = subjectVms.Where(s => s.GodinaId == id);
 
             return View(subjectVms);
         }
@@ -37,8 +53,8 @@ namespace GradeCalculator.Controllers
         // GET: PredmetController/Details/5
         public ActionResult Details(int id)
         {
-            var subject = subjectRepo.Get(id);
-            var subjectVm = mapper.Map<PredmetVM>(subject);
+            var subject = _subjectRepo.Get(id);
+            var subjectVm = _mapper.Map<PredmetVM>(subject);
 
             return View(subjectVm);
         }
@@ -60,17 +76,18 @@ namespace GradeCalculator.Controllers
         {
             try
             {
-                if (subjectRepo.GetAll().Any(p => p.Naziv == subjectVm.Naziv))
+                if (_subjectRepo.GetAll().Any(p => p.Naziv == subjectVm.Naziv))
                 {
                     ModelState.AddModelError("", "Vec postoji predmet sa istim nazivom");
 
                     return View();
                 }
 
-                var subject = mapper.Map<Predmet>(subjectVm);
-                subjectRepo.Add(subject);
+                var subject = _mapper.Map<Predmet>(subjectVm);
+                _subjectRepo.Add(subject);
                 _logService.AddLog("Korisnik spremio predmet u bazu.");
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("SubjectsByYear", new {id = subjectVm.GodinaId});
             }
             catch
             {
@@ -83,8 +100,8 @@ namespace GradeCalculator.Controllers
         {
             try
             {
-                var subject = subjectRepo.Get(id);
-                var subjectVm = mapper.Map<PredmetVM>(subject);
+                var subject = _subjectRepo.Get(id);
+                var subjectVm = _mapper.Map<PredmetVM>(subject);
 
                 ViewBag.GodineListItems = GetYears();
 
@@ -103,9 +120,9 @@ namespace GradeCalculator.Controllers
         {
             try
             {
-                var subject = mapper.Map<Predmet>(subjectVm);
+                var subject = _mapper.Map<Predmet>(subjectVm);
 
-                subjectRepo.Modify(id, subject);
+                _subjectRepo.Modify(id, subject);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -118,7 +135,7 @@ namespace GradeCalculator.Controllers
         // GET: PredmetController/Delete/5
         public ActionResult Delete(int id)
         {
-            var subject = mapper.Map<PredmetVM>(subjectRepo.Get(id));
+            var subject = _mapper.Map<PredmetVM>(_subjectRepo.Get(id));
 
             return View(subject);
         }
@@ -130,7 +147,7 @@ namespace GradeCalculator.Controllers
         {
             try
             {
-                subjectRepo.Remove(id);
+                _subjectRepo.Remove(id);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -142,19 +159,19 @@ namespace GradeCalculator.Controllers
 
         public IEnumerable<SelectListItem> GetYears()
         {
-            return yearRepo.GetAll()
+            return _yearRepo.GetAll()
                     .Select(y => new SelectListItem
                     {
                         Text = $"{y.Naziv}",
                         Value = y.Idgodina.ToString()
                     });
         }
+
         //GET: Predmet/UkupniProsjek
         public JsonResult UkupniProsjek()
         {
             var ukupniProsjek = _statistikaService.KalkulacijaProsjeka();
             return Json(ukupniProsjek);
-
         }
     }
 }
