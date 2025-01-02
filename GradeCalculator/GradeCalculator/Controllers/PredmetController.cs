@@ -42,10 +42,10 @@ namespace GradeCalculator.Controllers
         // GET: PredmetController/SubjectsByYear/5
         public ActionResult SubjectsByYear(int id)
         {
-            var subjects = _subjectRepo.GetAll();
+            var subjects = _subjectRepo.GetAll().Where(s => s.GodinaId == id);
             var subjectVms = _mapper.Map<IEnumerable<PredmetVM>>(subjects);
 
-            subjectVms = subjectVms.Where(s => s.GodinaId == id);
+            ViewBag.YearName = _yearRepo.Get(id)?.Naziv;
 
             return View(subjectVms);
         }
@@ -55,6 +55,8 @@ namespace GradeCalculator.Controllers
         {
             var subject = _subjectRepo.Get(id);
             var subjectVm = _mapper.Map<PredmetVM>(subject);
+
+            ViewBag.SubjectName = subjectVm.Naziv;
 
             return View(subjectVm);
         }
