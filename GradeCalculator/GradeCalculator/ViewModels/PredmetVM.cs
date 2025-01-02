@@ -18,6 +18,7 @@ namespace GradeCalculator.ViewModels
         [Display(Name = "Godina/semestar")]
         public int? GodinaId { get; set; }
 
+        [Display(Name = "Ocijene")]
         public virtual ICollection<Ocjena> Ocjenas { get; set; } = new List<Ocjena>();
     }
 }
