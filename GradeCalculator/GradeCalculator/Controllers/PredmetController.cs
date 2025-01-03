@@ -11,18 +11,21 @@ namespace GradeCalculator.Controllers
 {
     public class PredmetController : Controller
     {
+        private readonly IRepository<Ocjena> _gradeRepo;
         private readonly IRepository<Predmet> _subjectRepo;
         private readonly IRepository<Godina> _yearRepo;
         private readonly IMapper _mapper;
         private readonly StatistikaService _statistikaService;
         private readonly LogService _logService;
         public PredmetController(
+            IRepository<Ocjena> gradeRepo,
             IRepository<Predmet> subjectRepo, 
             IRepository<Godina> yearRepo, 
             IMapper mapper, 
             StatistikaService statistikaService, 
             LogService logService)
         {
+            _gradeRepo = gradeRepo;
             _subjectRepo = subjectRepo;
             _yearRepo = yearRepo;
             _mapper = mapper;
@@ -48,6 +51,20 @@ namespace GradeCalculator.Controllers
             ViewBag.YearName = _yearRepo.Get(id)?.Naziv;
 
             return View(subjectVms);
+        }
+
+        public ActionResult CalculateAverage(int id)
+        {
+            var subject = _subjectRepo.Get(id);
+            var grades = (_gradeRepo as OcijenaRepository)?.GetBySubject(id);
+
+            if (subject != null)
+            {
+                subject.Prosjek = grades?.Average(g => g.Vrijednost);
+                _subjectRepo.Modify(id, subject);
+            }
+
+            return RedirectToAction("Details", new { id = id});
         }
 
         // GET: PredmetController/Details/5
