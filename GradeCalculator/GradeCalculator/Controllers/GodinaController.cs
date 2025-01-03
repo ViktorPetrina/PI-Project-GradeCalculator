@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GradeCalculator.Models;
 using GradeCalculator.Repository;
+using GradeCalculator.Service;
 using GradeCalculator.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +11,20 @@ namespace GradeCalculator.Controllers
     public class GodinaController : Controller
     {
         private readonly IRepository<Godina> _godinaRepo;
+        private readonly IRepository<Predmet> _subjectRepo;
         private readonly IMapper _mapper;
+        private readonly LogService _logService;
 
-        public GodinaController(IRepository<Godina> godinaRepo, IMapper mapper)
+        public GodinaController(
+            IRepository<Godina> godinaRepo,
+            IRepository<Predmet> subjectRepo,
+            IMapper mapper, 
+            LogService logService)
         {
             _godinaRepo = godinaRepo;
+            _subjectRepo = subjectRepo;
             _mapper = mapper;
+            _logService = logService;
         }
 
         // GET: GodinaController
@@ -40,16 +49,29 @@ namespace GradeCalculator.Controllers
         // GET: GodinaController/Create
         public ActionResult Create()
         {
-            return View();
+            var year = new GodinaVM();
+
+            return View(year);
         }
 
         // POST: GodinaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(GodinaVM godinaVm)
         {
             try
             {
+                if (_godinaRepo.GetAll().Any(g => g.Naziv == godinaVm.Naziv))
+                {
+                    ModelState.AddModelError("", "Vec postoji godina sa istim nazivom");
+
+                    return View();
+                }
+
+                var year = _mapper.Map<Godina>(godinaVm);
+                _godinaRepo.Add(year);
+                _logService.AddLog("Korisnik spremio godinu u bazu.");
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -87,16 +109,25 @@ namespace GradeCalculator.Controllers
         // GET: GodinaController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var year = _mapper.Map<GodinaVM>(_godinaRepo.Get(id)); 
+
+            return View(year);
         }
 
         // POST: GodinaController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, GodinaVM godina)
         {
             try
             {
+                _subjectRepo.GetAll().ToList().ForEach(p => 
+                { 
+                    if (p.GodinaId == id) 
+                        _subjectRepo.Remove(p.Idpredmet); 
+                } );
+                _godinaRepo.Remove(id);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
