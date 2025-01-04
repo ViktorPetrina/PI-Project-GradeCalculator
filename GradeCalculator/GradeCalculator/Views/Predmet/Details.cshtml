@@ -29,5 +29,6 @@
 </div>
 <div>
     @Html.ActionLink("Nazad", "SubjectsByYear", new { id = Model.GodinaId }, new { @class = "btn btn-outline-primary" })
+    @Html.ActionLink("Dodaj ocjenu", "AddGrade", new { subjectId = Model.Idpredmet }, new { @class = "btn btn-primary" })
     @Html.ActionLink("Izračunaj prosjek", "CalculateAverage", new { id = Model.Idpredmet }, new { @class = "btn btn-primary" })
 </div>
