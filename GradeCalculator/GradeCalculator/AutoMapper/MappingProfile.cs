@@ -9,6 +9,7 @@ namespace GradeCalculator.AutoMapper
         public MappingProfile() 
         { 
             CreateMap<Predmet, PredmetVM>().ReverseMap();
+            CreateMap<Godina, GodinaVM>().ReverseMap();
         }
     }
 }

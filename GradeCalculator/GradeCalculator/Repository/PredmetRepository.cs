@@ -13,7 +13,7 @@ namespace GradeCalculator.Repository
 
         public Predmet? Get(int id)
         {
-            var subjects = _context.Predmets;
+            var subjects = _context.Predmets.Include(p => p.Ocjenas);
 
             return subjects.FirstOrDefault(p => p.Idpredmet == id);
         }
