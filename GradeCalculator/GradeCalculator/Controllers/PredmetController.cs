@@ -64,7 +64,44 @@ namespace GradeCalculator.Controllers
                 _subjectRepo.Modify(id, subject);
             }
 
-            return RedirectToAction("Details", new { id = id});
+            return RedirectToAction("Details", new { id = id });
+        }
+
+        public ActionResult AddGrade(int subjectId)
+        {
+            ViewBag.SubjectId = subjectId;
+            var gradeVm = new OcjenaVM();
+
+            ViewBag.PredmetListItems = GetSubjectListItems().Where(p => p.Value.Equals(subjectId.ToString()));
+
+            return View(gradeVm);
+        }
+
+        [HttpPost]
+        public ActionResult AddGrade(OcjenaVM gradeVm)
+        {
+            try
+            {
+                var subject = _subjectRepo.Get(gradeVm.PredmetId);
+
+                if (subject != null)
+                {
+                    subject.Ocjenas.Add(new Ocjena
+                    {
+                        PredmetId = gradeVm.PredmetId,
+                        Vrijednost = gradeVm.Vrijednost
+                    });
+                    _subjectRepo.Modify(gradeVm.PredmetId, subject); 
+                }
+                
+                _logService.AddLog("Korisnik spremio ocjenu u bazu.");
+
+                return RedirectToAction("Details", new { id = gradeVm.PredmetId });
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         // GET: PredmetController/Details/5
@@ -81,7 +118,7 @@ namespace GradeCalculator.Controllers
         // GET: PredmetController/Create
         public ActionResult Create()
         {
-            ViewBag.GodineListItems = GetYears();
+            ViewBag.GodineListItems = GetYearListItems();
 
             var subject = new PredmetVM();
             
@@ -122,7 +159,7 @@ namespace GradeCalculator.Controllers
                 var subject = _subjectRepo.Get(id);
                 var subjectVm = _mapper.Map<PredmetVM>(subject);
 
-                ViewBag.GodineListItems = GetYears();
+                ViewBag.GodineListItems = GetYearListItems();
 
                 return View(subjectVm);
             }
@@ -176,13 +213,23 @@ namespace GradeCalculator.Controllers
             }
         }
 
-        public IEnumerable<SelectListItem> GetYears()
+        public IEnumerable<SelectListItem> GetYearListItems()
         {
             return _yearRepo.GetAll()
                     .Select(y => new SelectListItem
                     {
                         Text = $"{y.Naziv}",
                         Value = y.Idgodina.ToString()
+                    });
+        }
+
+        public IEnumerable<SelectListItem> GetSubjectListItems()
+        {
+            return _subjectRepo.GetAll()
+                    .Select(p => new SelectListItem
+                    {
+                        Text = $"{p.Naziv}",
+                        Value = p.Idpredmet.ToString()
                     });
         }
 
