@@ -32,6 +32,8 @@ public partial class PiGradeCalculatorContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.UseCollation("Croatian_CI_AS");
+
         modelBuilder.Entity<Godina>(entity =>
         {
             entity.HasKey(e => e.Idgodina).HasName("PK__Godina__C94F992DC64DD7B5");
@@ -77,11 +79,11 @@ public partial class PiGradeCalculatorContext : DbContext
 
         modelBuilder.Entity<Log>(entity =>
         {
-            entity.HasKey(e => e.IdLog).HasName("PK__Log__F9D97F28DF5F4016");
+            entity.HasKey(e => e.Idlog).HasName("PK__Log__95D002081B995AC1");
 
             entity.ToTable("Log");
 
-            entity.Property(e => e.IdLog).HasColumnName("IDOcjena");
+            entity.Property(e => e.Idlog).HasColumnName("IDLog");
             entity.Property(e => e.Opis).HasMaxLength(100);
             entity.Property(e => e.Vrijeme).HasColumnType("datetime");
         });
