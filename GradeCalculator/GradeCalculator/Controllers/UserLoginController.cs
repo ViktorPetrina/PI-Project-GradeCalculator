@@ -129,6 +129,7 @@ namespace GradeCalculator.Controllers
                 };
                 _context.Add(korisnik);
                 _context.SaveChanges();
+                _logService.AddLog($"Korisnik sa ulogom {korisnik.UlogaId} se registrirao u sustav");
                 model.Id = korisnik.Idkorisnik;
                 return RedirectToAction("Index", "Home");
             }
