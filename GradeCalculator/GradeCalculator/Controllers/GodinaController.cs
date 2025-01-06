@@ -10,6 +10,7 @@ namespace GradeCalculator.Controllers
 {
     public class GodinaController : Controller
     {
+        // Dependency Inversion - IRepository - GodinaRepository
         private readonly IRepository<Godina> _godinaRepo;
         private readonly IRepository<Predmet> _subjectRepo;
         private readonly IMapper _mapper;

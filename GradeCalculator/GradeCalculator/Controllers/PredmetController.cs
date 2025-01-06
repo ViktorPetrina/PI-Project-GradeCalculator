@@ -7,18 +7,22 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
+//TODO:
+// maknuti uniqe imena predmeta u bazi
+// popraviti ne prikazivanje imena godine nakon brisanja predmeta
+
 namespace GradeCalculator.Controllers
 {
     public class PredmetController : Controller
     {
-        private readonly IRepository<Ocjena> _gradeRepo;
+        private readonly IReadAllRepository<Ocjena> _gradeRepo;
         private readonly IRepository<Predmet> _subjectRepo;
         private readonly IRepository<Godina> _yearRepo;
         private readonly IMapper _mapper;
         private readonly StatistikaService _statistikaService;
         private readonly LogService _logService;
         public PredmetController(
-            IRepository<Ocjena> gradeRepo,
+            IReadAllRepository<Ocjena> gradeRepo,
             IRepository<Predmet> subjectRepo, 
             IRepository<Godina> yearRepo, 
             IMapper mapper, 
@@ -56,11 +60,11 @@ namespace GradeCalculator.Controllers
         public ActionResult CalculateAverage(int id)
         {
             var subject = _subjectRepo.Get(id);
-            var grades = (_gradeRepo as OcijenaRepository)?.GetBySubject(id);
+            var grades = (_gradeRepo as ComplexOcjenaRepository)?.GetBySubject(id);
 
-            if (subject != null)
+            if (subject != null && grades != null)
             {
-                subject.Prosjek = grades?.Average(g => g.Vrijednost);
+                subject.Prosjek = Math.Round(grades.Average(g => g.Vrijednost), 1);
                 _subjectRepo.Modify(id, subject);
             }
 
@@ -131,8 +135,11 @@ namespace GradeCalculator.Controllers
         public ActionResult Create(PredmetVM subjectVm)
         {
             try
-            {
-                if (_subjectRepo.GetAll().Any(p => p.Naziv == subjectVm.Naziv))
+            {   
+                if (_subjectRepo
+                    .GetAll()
+                    .Where(s => s.Idpredmet.Equals(subjectVm.Idpredmet))
+                    .Any(p => p.Naziv == subjectVm.Naziv))
                 {
                     ModelState.AddModelError("", "Vec postoji predmet sa istim nazivom");
 
@@ -180,7 +187,7 @@ namespace GradeCalculator.Controllers
 
                 _subjectRepo.Modify(id, subject);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("SubjectsByYear", new { id = subjectVm.GodinaId });
             }
             catch
             {
@@ -205,7 +212,7 @@ namespace GradeCalculator.Controllers
             {
                 _subjectRepo.Remove(id);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("SubjectsByYear", new { id = id });
             }
             catch
             {

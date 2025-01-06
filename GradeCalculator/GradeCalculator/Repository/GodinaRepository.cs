@@ -2,6 +2,7 @@
 
 namespace GradeCalculator.Repository
 {
+    // Open / Close principle - mozemo raditi nove repozitorije bez mjenjanja postojecih
     public class GodinaRepository : IRepository<Godina>
     {
         private readonly PiGradeCalculatorContext _context;

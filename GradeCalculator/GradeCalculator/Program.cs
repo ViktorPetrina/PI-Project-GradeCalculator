@@ -18,7 +18,7 @@ builder.Services.AddScoped<LogService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-builder.Services.AddScoped<IRepository<Ocjena>, OcijenaRepository>();
+builder.Services.AddScoped<IReadAllRepository<Ocjena>, ComplexOcjenaRepository>();
 builder.Services.AddScoped<IRepository<Predmet>, PredmetRepository>();
 builder.Services.AddScoped<IRepository<Godina> ,GodinaRepository>();
 
