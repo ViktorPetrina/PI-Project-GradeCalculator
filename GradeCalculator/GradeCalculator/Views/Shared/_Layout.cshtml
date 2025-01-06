@@ -1,4 +1,15 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var user = this.ViewContext.HttpContext.User;
+    bool loggedin = false;
+    string username = "";
+    if (user != null && !string.IsNullOrEmpty(user.Identity.Name))
+    {
+        loggedin = true;
+        username = user.Identity.Name;
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
