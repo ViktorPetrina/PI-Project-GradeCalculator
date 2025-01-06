@@ -1,8 +1,9 @@
 ﻿namespace GradeCalculator.Repository
 {
-    public interface IRepository<T>
+    // Interface segregation principle
+    // Open / Close principle
+    public interface IRepository<T> : IReadAllRepository<T>
     {
-        public IEnumerable<T> GetAll();
         public T? Get(int id);
         public T? Add(T value);
         public T? Modify(int id, T value);
