@@ -1,0 +1,39 @@
+﻿@model GradeCalculator.ViewModels.AutentikacijaVM
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h4>Log In</h4>
+<hr />
+
+<h1>Login</h1>
+
+<form asp-action="Login" asp-controller="UserLogin" method="post">
+    @Html.AntiForgeryToken()
+
+    <div>
+        <label asp-for="Username"></label>
+        <input asp-for="Username" />
+        <span asp-validation-for="Username"></span>
+    </div>
+
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <input type="hidden" asp-for="ReturnUrl" />
+    
+    <button type="submit">Prijava</button>
+</form>
+<div class="form-group">
+    <a asp-controller="UserLogin" asp-action="Register">Not a user? Register here</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
