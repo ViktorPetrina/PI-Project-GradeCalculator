@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace GradeCalculator.Service
 {
-    public class StatistikaService : IStatistikaService
+    public class StatistikaService : IStatistikaService, IUkupnaStatistika
     {
         private readonly PiGradeCalculatorContext _context;
 
@@ -15,7 +15,7 @@ namespace GradeCalculator.Service
             _context = context;
         }
 
-        public double KalkulacijaProsjeka(int id)
+        public double KalkulacijaProsjeka()
         {
              var ocjene = _context.Korisniks
                 .Select(o=>o.UkupnaOcjena)
@@ -33,6 +33,7 @@ namespace GradeCalculator.Service
             int brojOcjena = _context.Korisniks.Count();
 
             var ocjenePercentage = _context.Korisniks
+                .AsEnumerable()
                 .GroupBy(o => (int)Math.Round(o.UkupnaOcjena, MidpointRounding.AwayFromZero))
                 .ToDictionary(
                     o => o.Key,

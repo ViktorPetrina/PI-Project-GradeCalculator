@@ -1,12 +1,10 @@
-﻿
-@model GradeCalculator.ViewModels.PredmetVM
+﻿@model GradeCalculator.ViewModels.GodinaVM
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Kreiranje predmeta</h1>
-
+<h1>Dodavanje godine</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -17,21 +15,14 @@
                 <input asp-for="Naziv" class="form-control" />
                 <span asp-validation-for="Naziv" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="GodinaId" class="control-label"></label>
-                <select asp-for="GodinaId" asp-items="ViewBag.GodineListItems" class="form-select"></select>
-                <span asp-validation-for="GodinaId" class="text-danger"></span>
-            </div>
             <br />
             <div class="form-group">
-                <input type="submit" value="Kreiraj" class="btn btn-primary" /> 
+                <input type="submit" value="Kreiraj" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

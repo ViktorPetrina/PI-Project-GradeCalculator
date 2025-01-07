@@ -5,7 +5,6 @@ namespace GradeCalculator.ViewModels
 {
     public class PredmetVM
     {
-        // ovo maknuti kasnije - ne pokazujemo id-jeve
         [Display(Name = "ID")]
         public int Idpredmet { get; set; }
 
@@ -19,6 +18,7 @@ namespace GradeCalculator.ViewModels
         [Display(Name = "Godina/semestar")]
         public int? GodinaId { get; set; }
 
+        [Display(Name = "Ocijene")]
         public virtual ICollection<Ocjena> Ocjenas { get; set; } = new List<Ocjena>();
     }
 }

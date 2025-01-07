@@ -22,16 +22,10 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Prosjek)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.GodinaId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.GodinaId)
-        </dd>
     </dl>
 
     <form asp-action="Delete">
         <input type="submit" value="Izbriši" class="btn btn-danger" /> |
-        <a asp-action="Index" class="btn btn-outline-primary">Nazad</a>
+        @Html.ActionLink("Nazad", "SubjectsByYear", new { id = Model.GodinaId }, new { @class = "btn btn-outline-primary" })
     </form>
 </div>
