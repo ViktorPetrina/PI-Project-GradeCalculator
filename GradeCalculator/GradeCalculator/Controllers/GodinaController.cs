@@ -12,7 +12,9 @@ namespace GradeCalculator.Controllers
 {
     public class GodinaController : Controller, IAveragable
     {
+
         private readonly PiGradeCalculatorContext _context;
+        // Dependency Inversion - IRepository - GodinaRepository
         private readonly IRepository<Godina> _godinaRepo;
         private readonly IRepository<Predmet> _subjectRepo;
         private readonly IMapper _mapper;

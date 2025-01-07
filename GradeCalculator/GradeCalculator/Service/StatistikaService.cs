@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace GradeCalculator.Service
 {
-    public class StatistikaService : IStatistikaService
+    public class StatistikaService : IStatistikaService, IUkupnaStatistika
     {
         private readonly PiGradeCalculatorContext _context;
 

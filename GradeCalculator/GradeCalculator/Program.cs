@@ -3,6 +3,7 @@ using GradeCalculator.Models;
 using GradeCalculator.Repository;
 using GradeCalculator.Security;
 using GradeCalculator.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,9 +20,25 @@ builder.Services.AddScoped<KorisnikService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-builder.Services.AddScoped<IRepository<Ocjena>, OcijenaRepository>();
+builder.Services.AddScoped<IReadAllRepository<Ocjena>, ComplexOcjenaRepository>();
 builder.Services.AddScoped<IRepository<Predmet>, PredmetRepository>();
 builder.Services.AddScoped<IRepository<Godina> ,GodinaRepository>();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});//mico: za session
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/User/Login"; //mico: treba editirat gdje se user salje 
+        options.LogoutPath = "/User/Logout";
+        options.AccessDeniedPath = "/User/Forbidden";
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    }); ;//mico:za cookies
 
 var app = builder.Build();
 
@@ -34,6 +51,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();//mico: autentikacija
 app.UseAuthorization();
 
 app.MapControllerRoute(
