@@ -39,9 +39,7 @@ namespace GradeCalculator.Service
                     o => o.Key,
                     o => Math.Round((o.Count() / (double)brojOcjena) * 100, 2) 
                      );
-            return ocjenePercentage;
-
-            
+            return ocjenePercentage; 
         }
     }
 }

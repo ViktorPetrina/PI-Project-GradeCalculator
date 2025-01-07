@@ -17,6 +17,9 @@
         </dd>
     </dl>
 
+    <button id="compareButton" class="btn btn-primary">Usporedi svoj prosjek</button>
+    <p id="result"></p>
+
     <h3>Ocijene</h3>
     <table class="table">
         @foreach (var item in Model.Ocjenas)
@@ -32,3 +35,51 @@
     @Html.ActionLink("Dodaj ocjenu", "AddGrade", new { subjectId = Model.Idpredmet }, new { @class = "btn btn-primary" })
     @Html.ActionLink("Izračunaj prosjek", "CalculateAverage", new { id = Model.Idpredmet }, new { @class = "btn btn-primary" })
 </div>
+
+@section Scripts
+{
+    <script>
+        document.getElementById('compareButton').addEventListener('click', function () {
+
+            const subjectId = "@Model.Idpredmet";
+            const yearId = "@Model.GodinaId";
+
+            const subjectAverageUrl = `/Predmet/GetAverage/${subjectId}`;
+            const yearAverageUrl = `/Godina/GetAverage/${yearId}`;
+
+            fetch(subjectAverageUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        console.log(response);
+                        throw new Error('Pogreška pri dohvaćanju prosjeka predmeta.');
+                    }
+                    return response.json();
+                })
+                .then(subjectAverage => {
+                    console.log(subjectAverage);
+                    fetch(yearAverageUrl)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Pogreška pri dohvaćanju prosjeka godine.');
+                            }
+                            return response.json();
+                        })
+                        .then(yearAverage => {
+                            const lowerBound = yearAverage - 0.5;
+                            const upperBound = yearAverage + 0.5;
+
+                            const resultElement = document.getElementById('result');
+                            if (subjectAverage > upperBound) {
+                                resultElement.textContent = `IZNAD prosijeka (tvoj prosijek: ${subjectAverage}) (prosijek predmeta: ${yearAverage}).`;
+                            } else if (subjectAverage < lowerBound) {
+                                resultElement.textContent = `ISPOD prosijeka (tvoj prosijek: ${subjectAverage}) (prosijek predmeta: ${yearAverage}).`;
+                            } else {
+                                resultElement.textContent = `PROSJEČNO (tvoj prosijek: ${subjectAverage}) (prosijek predmeta: ${yearAverage}).`;
+                            }
+                        })
+                        .catch(error => console.error('Greška:', error));
+                })
+                .catch(error => console.error('Greška:', error));
+        });
+    </script>
+}

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GradeCalculator.Interfaces;
 using GradeCalculator.Models;
 using GradeCalculator.Repository;
 using GradeCalculator.Service;
@@ -6,6 +7,7 @@ using GradeCalculator.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 //TODO:
 // maknuti uniqe imena predmeta u bazi
@@ -13,8 +15,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GradeCalculator.Controllers
 {
-    public class PredmetController : Controller
+    public class PredmetController : Controller, IAveragable
     {
+        private readonly PiGradeCalculatorContext _context;
         private readonly IReadAllRepository<Ocjena> _gradeRepo;
         private readonly IRepository<Predmet> _subjectRepo;
         private readonly IRepository<Godina> _yearRepo;
@@ -22,6 +25,7 @@ namespace GradeCalculator.Controllers
         private readonly StatistikaService _statistikaService;
         private readonly LogService _logService;
         public PredmetController(
+            PiGradeCalculatorContext context,
             IReadAllRepository<Ocjena> gradeRepo,
             IRepository<Predmet> subjectRepo, 
             IRepository<Godina> yearRepo, 
@@ -29,6 +33,7 @@ namespace GradeCalculator.Controllers
             StatistikaService statistikaService, 
             LogService logService)
         {
+            _context = context;
             _gradeRepo = gradeRepo;
             _subjectRepo = subjectRepo;
             _yearRepo = yearRepo;
@@ -69,6 +74,20 @@ namespace GradeCalculator.Controllers
             }
 
             return RedirectToAction("Details", new { id = id });
+        }
+
+        public double? GetAverage(int id) 
+        {
+            var subject = _subjectRepo.Get(id);
+            List<int?> grades = _context.Ocjenas
+                            .Where(o => o.PredmetId == id)
+                            .Select(o => o.Vrijednost)
+                            .ToList();
+
+            if (subject == null)
+                return null;
+
+            return Math.Round((double)grades.Average(), 2, MidpointRounding.AwayFromZero);
         }
 
         public ActionResult AddGrade(int subjectId)

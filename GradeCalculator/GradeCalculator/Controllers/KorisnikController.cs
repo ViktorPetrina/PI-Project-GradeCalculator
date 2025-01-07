@@ -1,20 +1,10 @@
 ﻿using GradeCalculator.Models;
 using GradeCalculator.Security;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using System;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using GradeCalculator.ViewModels;
-using NuGet.Protocol;
-using System.Diagnostics;
-using System.Configuration;
 using GradeCalculator.Service;
-using Newtonsoft.Json;
+using GradeCalculator.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using GradeCalculator.Utilities;
 
 namespace GradeCalculator.Controllers
 {
@@ -22,11 +12,13 @@ namespace GradeCalculator.Controllers
     {
         private readonly PiGradeCalculatorContext _context;
         private readonly StatistikaService _statistikaService;
+        private readonly KorisnikService _korisnikService;
 
-        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService)
+        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService, KorisnikService korisnikService)
         {
             _context = context;
             _statistikaService = statistikaService;
+            _korisnikService = korisnikService;
         }
 
         private const int REGULAR_USER_ID = 1;
@@ -34,53 +26,49 @@ namespace GradeCalculator.Controllers
         // GET: KorisnikController
         public ActionResult Index()
         {
-            
+            var usersVMs = _korisnikService.GetAllUsers();
 
-            return View();
+            return View(usersVMs);
         }
 
         public ActionResult Details(int id)
         {
-            var user = _context.Korisniks
-                .Include(r => r.Uloga)
-                .FirstOrDefault(r => r.Idkorisnik == id);
+            var user = _korisnikService.GetUserDetails(id);
             if (user == null)
             {
                 return NotFound($"Could not find user with id {id}");
             }
 
-            var userVm = new KorisnikVM
+            var userVm = new ShowKorisnikVM
             {
-                Id = user.Idkorisnik,
-                UserName = user.KorisnickoIme,
-                Email = user.Eposta,
-                TotalGrade = user.UkupnaOcjena,
-                RoleId = user.UlogaId
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                TotalGrade = user.TotalGrade,
+                RoleName = user.RoleName
             };
 
-            
             return View(userVm);
         }
 
         public ActionResult Profile()
         {
-            //var username = HttpContext.User.Identity.Name;
-            var username = "pero";
+            int userId = ProfileUtils.GetLoggedInUserId();
+            ViewBag.UserID = userId;
 
-            var user = _context.Korisniks
-                .Include(r => r.Uloga)
-                .FirstOrDefault(r => r.KorisnickoIme == username);
+            var user = _korisnikService.GetUserDetails(userId);
             if (user == null)
             {
                 return NotFound($"Could not find user you're looking for");
             }
 
-            var userVm = new KorisnikVM
+            var userVm = new ShowKorisnikVM
             {
-                Id = user.Idkorisnik,
-                UserName = user.KorisnickoIme,
-                Email = user.Eposta,
-                TotalGrade = user.UkupnaOcjena
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                TotalGrade = user.TotalGrade,
+                RoleName = user.RoleName
             };
 
             return View(userVm);
@@ -100,7 +88,7 @@ namespace GradeCalculator.Controllers
         }
 
         [HttpPut]
-        public ActionResult SetProfileData(int id, [FromBody] KorisnikVM userVm)
+        public ActionResult SetProfileData(int id, [FromBody] ShowKorisnikVM userVm)
         {
             var user = _context.Korisniks.First(p => p.Idkorisnik == id);
             user.Eposta = userVm.Email;
@@ -138,21 +126,11 @@ namespace GradeCalculator.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return View();
-                }
-
-                if (_context.Korisniks.Any(x => x.KorisnickoIme.Equals(userVm.UserName)))
-                {
-                    ModelState.AddModelError("UserName", "User already EXISTS");
+                if (_korisnikService.IsEmailTaken(userVm.Email)) 
                     return View();
-                }
-
-                if (_context.Korisniks.Any(x => x.Eposta.Equals(userVm.Email)))
-                {
-                    ModelState.AddModelError("Email", "Email already EXISTS");
+                if (_korisnikService.IsUsernameTaken(userVm.UserName)) 
                     return View();
-                }
 
                 var b64salt = PasswordProvider.GetSalt();
                 var b64hash = PasswordProvider.GetHash(userVm.Password, b64salt);
@@ -177,40 +155,28 @@ namespace GradeCalculator.Controllers
             }
         }
 
-        // GET: KorisnikController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: KorisnikController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
         // GET: KorisnikController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var user = _korisnikService.GetUserDetails(id);
+            var userVm = new ShowKorisnikVM
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email
+            };
+            return View(userVm);
         }
 
         // POST: KorisnikController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, ShowKorisnikVM userVm)
         {
             try
             {
+                _korisnikService.RemoveUser(id);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -218,6 +184,7 @@ namespace GradeCalculator.Controllers
                 return View();
             }
         }
+
         // GET: 
         public JsonResult GetDataPoints()
         {
@@ -231,8 +198,6 @@ namespace GradeCalculator.Controllers
                 dataPoints.Add(new DataPoint(i.ToString(), value));
             }
             
-            
-   
             return Json(dataPoints);
         }
     }

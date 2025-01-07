@@ -1,15 +1,19 @@
 ﻿using AutoMapper;
+using GradeCalculator.Interfaces;
 using GradeCalculator.Models;
 using GradeCalculator.Repository;
 using GradeCalculator.Service;
 using GradeCalculator.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GradeCalculator.Controllers
 {
-    public class GodinaController : Controller
+    public class GodinaController : Controller, IAveragable
     {
+
+        private readonly PiGradeCalculatorContext _context;
         // Dependency Inversion - IRepository - GodinaRepository
         private readonly IRepository<Godina> _godinaRepo;
         private readonly IRepository<Predmet> _subjectRepo;
@@ -17,11 +21,13 @@ namespace GradeCalculator.Controllers
         private readonly LogService _logService;
 
         public GodinaController(
+            PiGradeCalculatorContext context,
             IRepository<Godina> godinaRepo,
             IRepository<Predmet> subjectRepo,
             IMapper mapper, 
             LogService logService)
         {
+            _context = context;
             _godinaRepo = godinaRepo;
             _subjectRepo = subjectRepo;
             _mapper = mapper;
@@ -135,6 +141,25 @@ namespace GradeCalculator.Controllers
             {
                 return View();
             }
+        }
+
+        public double? GetAverage(int id)
+        {
+            var year = _godinaRepo.Get(id);
+
+            if (year == null)
+                return null;
+
+            List<double?> subjects = _context.Predmets
+                .Include(s => s.Godina)
+                .Where(s => s.Godina.Naziv.ToLower() == year.Naziv.ToLower())
+                .Select(s => s.Prosjek)
+                .ToList();
+
+            if(subjects == null)
+                return null;
+
+            return Math.Round((double)subjects.Average(), 2, MidpointRounding.AwayFromZero);
         }
     }
 }
