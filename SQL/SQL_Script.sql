@@ -32,14 +32,14 @@ go
 create table Predmet (
     IDPredmet int primary key identity (1, 1),
     Naziv nvarchar(50) not null,
-	Prosjek float default 0 not null,
+	Prosjek float,
 	GodinaID int foreign key (GodinaID) references Godina(IDGodina)
 );
 go
 
 create table Ocjena (
     IDOcjena int primary key identity (1, 1),
-    Vrijednost int not null,
+    Vrijednost int,
 	PredmetID int foreign key (PredmetID) references Predmet(IDPredmet)
 );
 go
