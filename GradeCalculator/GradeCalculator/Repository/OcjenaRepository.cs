@@ -18,16 +18,21 @@ namespace GradeCalculator.Repository
         {
             return _context.Ocjenas;
         }
+
+        public virtual IEnumerable<Ocjena> GetBySubject(int id)
+        {
+            return _context.Ocjenas.Where(o => o.PredmetId == id);
+        }
     }
 
-    // Liskov substitution - mozemo
+    // Liskov substitution 
     public class ComplexOcjenaRepository : OcjenaRepository
     {
         public ComplexOcjenaRepository(PiGradeCalculatorContext context) : base(context)
         {
         }
 
-        public IEnumerable<Ocjena> GetBySubject(int id)
+        public override IEnumerable<Ocjena> GetBySubject(int id)
         {
             return _context.Ocjenas.Where(o => o.PredmetId == id);
         }
