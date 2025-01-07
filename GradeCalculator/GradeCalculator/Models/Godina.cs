@@ -9,7 +9,7 @@ public partial class Godina
 
     public string Naziv { get; set; } = null!;
 
-    public double? Prosjek { get; set; }
+    public double Prosjek { get; set; }
 
     public int? KorisnikId { get; set; }
 

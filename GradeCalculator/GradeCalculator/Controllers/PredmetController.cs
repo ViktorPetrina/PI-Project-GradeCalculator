@@ -75,7 +75,7 @@ namespace GradeCalculator.Controllers
         public double? GetAverage(int id) 
         {
             var subject = _subjectRepo.Get(id);
-            List<int> grades = _context.Ocjenas
+            List<int?> grades = _context.Ocjenas
                             .Where(o => o.PredmetId == id)
                             .Select(o => o.Vrijednost)
                             .ToList();
@@ -83,7 +83,7 @@ namespace GradeCalculator.Controllers
             if (subject == null)
                 return null;
 
-            return Math.Round(grades.Average(), 2, MidpointRounding.AwayFromZero);
+            return Math.Round((double)grades.Average(), 2, MidpointRounding.AwayFromZero);
         }
 
         public ActionResult AddGrade(int subjectId)

@@ -7,7 +7,7 @@ public partial class Ocjena
 {
     public int Idocjena { get; set; }
 
-    public int Vrijednost { get; set; }
+    public int? Vrijednost { get; set; }
 
     public int? PredmetId { get; set; }
 
