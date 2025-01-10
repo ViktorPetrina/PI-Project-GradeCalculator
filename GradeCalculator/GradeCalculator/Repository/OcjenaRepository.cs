@@ -16,7 +16,7 @@ namespace GradeCalculator.Repository
 
         public IEnumerable<Ocjena> GetAll()
         {
-            return _context.Ocjenas;
+            return _context.Ocjenas.Include(o => o.Predmet);
         }
 
         public virtual IEnumerable<Ocjena> GetBySubject(int id)
