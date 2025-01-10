@@ -36,7 +36,7 @@ public partial class PiGradeCalculatorContext : DbContext
 
         modelBuilder.Entity<Godina>(entity =>
         {
-            entity.HasKey(e => e.Idgodina).HasName("PK__Godina__C94F992DAA6DBB9E");
+            entity.HasKey(e => e.Idgodina).HasName("PK__Godina__C94F992DF476CD5D");
 
             entity.ToTable("Godina");
 
@@ -46,18 +46,18 @@ public partial class PiGradeCalculatorContext : DbContext
 
             entity.HasOne(d => d.Korisnik).WithMany(p => p.Godinas)
                 .HasForeignKey(d => d.KorisnikId)
-                .HasConstraintName("FK__Godina__Korisnik__70DDC3D8");
+                .HasConstraintName("FK__Godina__Korisnik__412EB0B6");
         });
 
         modelBuilder.Entity<Korisnik>(entity =>
         {
-            entity.HasKey(e => e.Idkorisnik).HasName("PK__Korisnik__6F9CD5C41D1ADFE6");
+            entity.HasKey(e => e.Idkorisnik).HasName("PK__Korisnik__6F9CD5C4D46F8C1F");
 
             entity.ToTable("Korisnik");
 
-            entity.HasIndex(e => e.Eposta, "UQ__Korisnik__12BEDB6790A4B903").IsUnique();
+            entity.HasIndex(e => e.Eposta, "UQ__Korisnik__12BEDB67AF8D9812").IsUnique();
 
-            entity.HasIndex(e => e.KorisnickoIme, "UQ__Korisnik__992E6F92A2974909").IsUnique();
+            entity.HasIndex(e => e.KorisnickoIme, "UQ__Korisnik__992E6F92E7118B3B").IsUnique();
 
             entity.Property(e => e.Idkorisnik).HasColumnName("IDKorisnik");
             entity.Property(e => e.Eposta)
@@ -72,12 +72,12 @@ public partial class PiGradeCalculatorContext : DbContext
             entity.HasOne(d => d.Uloga).WithMany(p => p.Korisniks)
                 .HasForeignKey(d => d.UlogaId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Korisnik__UlogaI__2A4B4B5E");
+                .HasConstraintName("FK__Korisnik__UlogaI__3D5E1FD2");
         });
 
         modelBuilder.Entity<Log>(entity =>
         {
-            entity.HasKey(e => e.Idlog).HasName("PK__Log__95D002080CBA8D0A");
+            entity.HasKey(e => e.Idlog).HasName("PK__Log__95D00208BC1CA6E1");
 
             entity.ToTable("Log");
 
@@ -88,7 +88,7 @@ public partial class PiGradeCalculatorContext : DbContext
 
         modelBuilder.Entity<Ocjena>(entity =>
         {
-            entity.HasKey(e => e.Idocjena).HasName("PK__Ocjena__F9D97F2811524605");
+            entity.HasKey(e => e.Idocjena).HasName("PK__Ocjena__F9D97F286BF9BA44");
 
             entity.ToTable("Ocjena");
 
@@ -97,12 +97,12 @@ public partial class PiGradeCalculatorContext : DbContext
 
             entity.HasOne(d => d.Predmet).WithMany(p => p.Ocjenas)
                 .HasForeignKey(d => d.PredmetId)
-                .HasConstraintName("FK__Ocjena__PredmetI__76969D2E");
+                .HasConstraintName("FK__Ocjena__PredmetI__46E78A0C");
         });
 
         modelBuilder.Entity<Predmet>(entity =>
         {
-            entity.HasKey(e => e.Idpredmet).HasName("PK__Predmet__A6C7A1C4BCBD86A6");
+            entity.HasKey(e => e.Idpredmet).HasName("PK__Predmet__A6C7A1C41AD50D9D");
 
             entity.ToTable("Predmet");
 
@@ -112,16 +112,16 @@ public partial class PiGradeCalculatorContext : DbContext
 
             entity.HasOne(d => d.Godina).WithMany(p => p.Predmets)
                 .HasForeignKey(d => d.GodinaId)
-                .HasConstraintName("FK__Predmet__GodinaI__73BA3083");
+                .HasConstraintName("FK__Predmet__GodinaI__440B1D61");
         });
 
         modelBuilder.Entity<Uloga>(entity =>
         {
-            entity.HasKey(e => e.Iduloga).HasName("PK__Uloga__AB59C07D001A01F3");
+            entity.HasKey(e => e.Iduloga).HasName("PK__Uloga__AB59C07D443CE5E9");
 
             entity.ToTable("Uloga");
 
-            entity.HasIndex(e => e.Naziv, "UQ__Uloga__603E81468A0251B5").IsUnique();
+            entity.HasIndex(e => e.Naziv, "UQ__Uloga__603E814611BF11F3").IsUnique();
 
             entity.Property(e => e.Iduloga).HasColumnName("IDUloga");
             entity.Property(e => e.Naziv).HasMaxLength(50);

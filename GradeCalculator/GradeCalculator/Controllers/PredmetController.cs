@@ -69,8 +69,14 @@ namespace GradeCalculator.Controllers
 
             if (subject != null && grades != null)
             {
-                subject.Prosjek = Math.Round(grades.Average(g => g.Vrijednost), 1);
+                subject.Prosjek = Math.Round((double)grades.Average(g => g.Vrijednost), 1);
                 _subjectRepo.Modify(id, subject);
+
+                var year = _yearRepo.Get(subject.GodinaId.Value);
+                var allGrades = _gradeRepo.GetAll().Where(g => g.Predmet?.GodinaId == subject.GodinaId);
+
+                year.Prosjek = Math.Round((double)allGrades.Average(g => g.Vrijednost), 1);
+                _yearRepo.Modify(year.Idgodina, year);
             }
 
             return RedirectToAction("Details", new { id = id });
