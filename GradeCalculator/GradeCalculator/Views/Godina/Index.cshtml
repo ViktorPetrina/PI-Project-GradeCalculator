@@ -6,9 +6,10 @@
 
 <h1>Godine</h1>
 
-<p>
+<div>
     <a asp-action="Create" class="btn btn-outline-primary">Kreiraj godinu/semestar</a>
-</p>
+    @Html.ActionLink("Izvoz podataka", "ExportData", new { id = Model.First().KorisnikId }, new { @class = "btn btn-primary" })
+</div>
 
 <table class="table">
     <thead>

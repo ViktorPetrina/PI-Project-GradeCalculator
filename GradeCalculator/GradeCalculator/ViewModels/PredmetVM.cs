@@ -1,10 +1,12 @@
 ﻿using GradeCalculator.Models;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace GradeCalculator.ViewModels
 {
     public class PredmetVM
     {
+        [JsonIgnore]
         [Display(Name = "ID")]
         public int Idpredmet { get; set; }
 
@@ -15,10 +17,11 @@ namespace GradeCalculator.ViewModels
         [Display(Name = "Prosjek ocijena")]
         public double? Prosjek { get; set; }
 
+        [JsonIgnore]
         [Display(Name = "Godina/semestar")]
         public int? GodinaId { get; set; }
 
         [Display(Name = "Ocijene")]
-        public virtual ICollection<Ocjena> Ocjenas { get; set; } = new List<Ocjena>();
+        public virtual ICollection<OcjenaVM> Ocjenas { get; set; } = new List<OcjenaVM>();
     }
 }

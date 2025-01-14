@@ -1,4 +1,5 @@
 ﻿using GradeCalculator.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GradeCalculator.Repository
 {
@@ -62,7 +63,9 @@ namespace GradeCalculator.Repository
 
         private IEnumerable<Godina> GetGodinas()
         {
-            return _context.Godinas;
+            return _context.Godinas
+                .Include(g => g.Predmets)
+                .ThenInclude(p => p.Ocjenas);
         }
 
         private void CommitChanges()

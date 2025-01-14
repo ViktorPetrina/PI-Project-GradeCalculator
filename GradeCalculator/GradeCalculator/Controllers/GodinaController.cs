@@ -7,6 +7,11 @@ using GradeCalculator.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Text;
+
+// TODO:
+// dodati godine userima i tako ih prikazivati
 
 namespace GradeCalculator.Controllers
 {
@@ -51,6 +56,21 @@ namespace GradeCalculator.Controllers
             var yearVm = _mapper.Map<GodinaVM>(year);
 
             return View(yearVm);
+        }
+
+        public ActionResult ExportData(int id)
+        {
+            var years = _godinaRepo.GetAll().Where(g => g.KorisnikId == id);
+            var yearVms = _mapper.Map<IEnumerable<GodinaVM>>(years);
+
+            var json = JsonConvert.SerializeObject(yearVms);
+            var bytes = Encoding.UTF8.GetBytes(json);
+            var download = new FileContentResult(bytes, "application/json")
+            {
+                FileDownloadName = "ocjene.json"
+            };
+
+            return download;
         }
 
         // GET: GodinaController/Create
