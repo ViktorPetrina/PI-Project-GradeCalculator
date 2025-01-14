@@ -1,5 +1,4 @@
-﻿using GradeCalculator.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GradeCalculator.ViewModels
 {
@@ -14,6 +13,8 @@ namespace GradeCalculator.ViewModels
         [Display(Name = "Prosjek ocijena")]
         public double? Prosjek { get; set; }
 
-        public virtual ICollection<Predmet> Predmets { get; set; } = new List<Predmet>();
+        public int? KorisnikId { get; set; }
+
+        public virtual ICollection<PredmetVM> Predmets { get; set; } = new List<PredmetVM>();
     }
 }
