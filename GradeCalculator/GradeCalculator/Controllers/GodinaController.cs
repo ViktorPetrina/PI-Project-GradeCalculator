@@ -12,11 +12,14 @@ using System.Text;
 
 // TODO:
 // dodati godine userima i tako ih prikazivati
+// bug: kada nema godina stranica puca
 
 namespace GradeCalculator.Controllers
 {
     public class GodinaController : Controller, IAveragable
     {
+        private const string FILE_ERROR = "Unesite valjanu json datoteku.";
+        private const string YEAR_EXISTS_ERROR = "Vec postoji godina sa istim nazivom";
 
         private readonly PiGradeCalculatorContext _context;
         // Dependency Inversion - IRepository - GodinaRepository
@@ -61,9 +64,8 @@ namespace GradeCalculator.Controllers
         public ActionResult ExportData(int id)
         {
             var years = _godinaRepo.GetAll().Where(g => g.KorisnikId == id);
-            var yearVms = _mapper.Map<IEnumerable<GodinaVM>>(years);
 
-            var json = JsonConvert.SerializeObject(yearVms);
+            var json = JsonConvert.SerializeObject(years);
             var bytes = Encoding.UTF8.GetBytes(json);
             var download = new FileContentResult(bytes, "application/json")
             {
@@ -71,6 +73,34 @@ namespace GradeCalculator.Controllers
             };
 
             return download;
+        }
+
+        public ActionResult ImportData()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ImportData(IFormFile file)
+        {
+            if (file == null || file.Length == 0) 
+            { 
+                ModelState.AddModelError("file", FILE_ERROR); 
+                return View(); 
+            }
+
+            using (var stream = new StreamReader(file.OpenReadStream()))
+            {
+                var json = stream.ReadToEnd();
+                var years = JsonConvert.DeserializeObject<List<Godina>>(json);
+
+                if (years != null && years is List<Godina>)
+                {
+                    years.ForEach(y => _godinaRepo.Add(y));
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: GodinaController/Create
@@ -90,7 +120,7 @@ namespace GradeCalculator.Controllers
             {
                 if (_godinaRepo.GetAll().Any(g => g.Naziv == godinaVm.Naziv))
                 {
-                    ModelState.AddModelError("", "Vec postoji godina sa istim nazivom");
+                    ModelState.AddModelError("", YEAR_EXISTS_ERROR);
 
                     return View();
                 }
