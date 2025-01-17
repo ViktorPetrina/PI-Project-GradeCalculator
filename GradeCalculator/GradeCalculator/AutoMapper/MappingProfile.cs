@@ -10,6 +10,7 @@ namespace GradeCalculator.AutoMapper
         { 
             CreateMap<Predmet, PredmetVM>().ReverseMap();
             CreateMap<Godina, GodinaVM>().ReverseMap();
+            CreateMap<Ocjena, OcjenaVM>().ReverseMap();
         }
     }
 }
