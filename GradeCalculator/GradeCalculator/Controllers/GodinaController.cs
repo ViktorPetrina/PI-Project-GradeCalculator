@@ -12,9 +12,8 @@ using System.Text;
 
 // TODO:
 // dodati godine userima i tako ih prikazivati
-// bug: kada nema godina stranica puca
 
-namespace GradeCalculator.Controllers
+namespace GradeCalculator.Controllers                   
 {
     public class GodinaController : Controller, IAveragable
     {
@@ -48,11 +47,13 @@ namespace GradeCalculator.Controllers
             var years = _godinaRepo.GetAll();
             var yearVms = _mapper.Map<IEnumerable<GodinaVM>>(years);
 
+            ViewBag.Id = yearVms.FirstOrDefault()?.KorisnikId;
+
             return View(yearVms);
         }
 
         // mozda maknuti details jer je nepotrebno ?
-        // GET: GodinaController/Details/5
+        // GET: GodinaController/Details
         public ActionResult Details(int id)
         {
             var year = _godinaRepo.Get(id);
@@ -126,6 +127,7 @@ namespace GradeCalculator.Controllers
                 }
 
                 var year = _mapper.Map<Godina>(godinaVm);
+                year.KorisnikId = 1;
                 _godinaRepo.Add(year);
                 _logService.AddLog("Korisnik spremio godinu u bazu.");
 
