@@ -5,6 +5,7 @@ using GradeCalculator.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GradeCalculator.Utilities;
+using GradeCalculator.Factory;
 
 namespace GradeCalculator.Controllers
 {
@@ -104,8 +105,8 @@ namespace GradeCalculator.Controllers
         {
             var user = _context.Korisniks.First(p => p.Idkorisnik == id);
 
-            user.LozinkaSalt = PasswordProvider.GetSalt();
-            user.LozinkaHash = PasswordProvider.GetHash(passwordVm.NewPassword, user.LozinkaSalt);
+            user.LozinkaSalt = PasswordProvider.Instance.GetSalt();
+            user.LozinkaHash = PasswordProvider.Instance.GetHash(passwordVm.NewPassword, user.LozinkaSalt);
 
             _context.SaveChanges();
 
@@ -132,17 +133,9 @@ namespace GradeCalculator.Controllers
                 if (_korisnikService.IsUsernameTaken(userVm.UserName)) 
                     return View();
 
-                var b64salt = PasswordProvider.GetSalt();
-                var b64hash = PasswordProvider.GetHash(userVm.Password, b64salt);
-
-                var user = new Korisnik
-                {
-                    KorisnickoIme = userVm.UserName,
-                    Eposta = userVm.Email,
-                    LozinkaHash = b64hash,
-                    LozinkaSalt = b64salt,
-                    UlogaId = REGULAR_USER_ID
-                };
+                var roleName = userVm.IsAdmin ? "admin" : "basic";
+                var factory = KorisnikFactory.GetKorisnik(roleName);
+                var user = factory.CreateUser(userVm);
 
                 _context.Add(user);
                 _context.SaveChanges();

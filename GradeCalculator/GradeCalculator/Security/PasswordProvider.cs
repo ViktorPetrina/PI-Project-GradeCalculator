@@ -5,7 +5,15 @@ namespace GradeCalculator.Security
 {
     public class PasswordProvider
     {
-        public static string GetSalt()
+        private static readonly Lazy<PasswordProvider> lazy = new Lazy<PasswordProvider>(() => new PasswordProvider());
+
+        public static PasswordProvider Instance => lazy.Value;
+
+        private PasswordProvider()
+        {
+        }
+
+        public string GetSalt()
         {
             byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
             string b64Salt = Convert.ToBase64String(salt);
@@ -13,7 +21,7 @@ namespace GradeCalculator.Security
             return b64Salt;
         }
 
-        public static string GetHash(string password, string b64salt)
+        public string GetHash(string password, string b64salt)
         {
             byte[] salt = Convert.FromBase64String(b64salt);
 

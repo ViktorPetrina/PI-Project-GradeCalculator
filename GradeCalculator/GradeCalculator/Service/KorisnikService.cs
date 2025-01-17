@@ -51,12 +51,6 @@ namespace GradeCalculator.Service
             return _context.Korisniks.Any(u => u.KorisnickoIme == username);
         }
 
-        public void AddUser(Korisnik user)
-        {
-            _context.Korisniks.Add(user);
-            _context.SaveChanges();
-        }
-
         public void RemoveUser(int id)
         {
             var user = _context.Korisniks.Include(u => u.Uloga).FirstOrDefault(u => u.Idkorisnik == id);
