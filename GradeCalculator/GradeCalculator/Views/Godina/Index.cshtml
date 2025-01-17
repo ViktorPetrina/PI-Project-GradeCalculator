@@ -15,7 +15,7 @@
 
 <div>
     <a asp-action="Create" class="btn btn-primary">Kreiraj godinu/semestar</a>
-    @Html.ActionLink("Izvoz podataka", "ExportData", new { id = Model.First().KorisnikId }, new { @class = "btn btn-outline-primary data-button" })
+    @Html.ActionLink("Izvoz podataka", "ExportData", new { id = ViewBag.Id }, new { @class = "btn btn-outline-primary data-button" })
     @Html.ActionLink("Uvoz podataka", "ImportData", new {}, new { @class = "btn btn-outline-primary data-button" })
 </div>
 
