@@ -26,19 +26,12 @@ namespace GradeCalculator.Service
             }).ToList();
         }
 
-        public ShowKorisnikVM GetUserDetails(int id)
+        public Korisnik GetUser(int id)
         {
             var user = _context.Korisniks.Include(u => u.Uloga).FirstOrDefault(u => u.Idkorisnik == id);
             if (user == null) return null;
 
-            return new ShowKorisnikVM
-            {
-                Id = user.Idkorisnik,
-                UserName = user.KorisnickoIme,
-                Email = user.Eposta,
-                TotalGrade = user.UkupnaOcjena,
-                RoleName = user.Uloga.Naziv
-            };
+            return user;
         }
 
         public bool IsEmailTaken(string email)

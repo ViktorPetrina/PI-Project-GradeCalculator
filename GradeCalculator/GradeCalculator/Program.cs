@@ -1,3 +1,4 @@
+using GradeCalculator.Adapter;
 using GradeCalculator.AutoMapper;
 using GradeCalculator.Models;
 using GradeCalculator.Repository;
@@ -23,6 +24,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<IReadAllRepository<Ocjena>, ComplexOcjenaRepository>();
 builder.Services.AddScoped<IRepository<Predmet>, PredmetRepository>();
 builder.Services.AddScoped<IRepository<Godina> ,GodinaRepository>();
+
+builder.Services.AddScoped<IKorisnikAdapter, KorisnikAdapter>();
 
 builder.Services.AddSession(options =>
 {

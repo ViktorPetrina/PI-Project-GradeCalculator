@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GradeCalculator.Utilities;
 using GradeCalculator.Factory;
+using GradeCalculator.Adapter;
+using GradeCalculator.Builder;
 
 namespace GradeCalculator.Controllers
 {
@@ -14,15 +16,15 @@ namespace GradeCalculator.Controllers
         private readonly PiGradeCalculatorContext _context;
         private readonly StatistikaService _statistikaService;
         private readonly KorisnikService _korisnikService;
+        private readonly IKorisnikAdapter _korisnikAdapter;
 
-        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService, KorisnikService korisnikService)
+        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService, KorisnikService korisnikService, IKorisnikAdapter korisnikAdapter)
         {
             _context = context;
             _statistikaService = statistikaService;
             _korisnikService = korisnikService;
+            _korisnikAdapter = korisnikAdapter;
         }
-
-        private const int REGULAR_USER_ID = 1;
 
         // GET: KorisnikController
         public ActionResult Index()
@@ -34,20 +36,18 @@ namespace GradeCalculator.Controllers
 
         public ActionResult Details(int id)
         {
-            var user = _korisnikService.GetUserDetails(id);
+            var user = _korisnikService.GetUser(id);
             if (user == null)
             {
                 return NotFound($"Could not find user with id {id}");
             }
 
-            var userVm = new ShowKorisnikVM
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                TotalGrade = user.TotalGrade,
-                RoleName = user.RoleName
-            };
+            var userVm = new KorisnikBuilder()
+                        .SetId(user.Idkorisnik)
+                        .SetUserName(user.KorisnickoIme)
+                        .SetEmail(user.Eposta)
+                        .SetTotalGrade(user.UkupnaOcjena)
+                        .Build();
 
             return View(userVm);
         }
@@ -57,20 +57,13 @@ namespace GradeCalculator.Controllers
             int userId = ProfileUtils.GetLoggedInUserId();
             ViewBag.UserID = userId;
 
-            var user = _korisnikService.GetUserDetails(userId);
+            var user = _korisnikService.GetUser(userId);
             if (user == null)
             {
                 return NotFound($"Could not find user you're looking for");
             }
 
-            var userVm = new ShowKorisnikVM
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                TotalGrade = user.TotalGrade,
-                RoleName = user.RoleName
-            };
+            var userVm = _korisnikAdapter.Adapt(user);
 
             return View(userVm);
         }
@@ -151,13 +144,8 @@ namespace GradeCalculator.Controllers
         // GET: KorisnikController/Delete/5
         public ActionResult Delete(int id)
         {
-            var user = _korisnikService.GetUserDetails(id);
-            var userVm = new ShowKorisnikVM
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email
-            };
+            var user = _korisnikService.GetUser(id);
+            var userVm = _korisnikAdapter.Adapt(user);
             return View(userVm);
         }
 
