@@ -4,7 +4,6 @@ using GradeCalculator.Models;
 using GradeCalculator.Repository;
 using GradeCalculator.Service;
 using GradeCalculator.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -199,12 +198,13 @@ namespace GradeCalculator.Controllers
         {
             var year = _godinaRepo.Get(id);
 
-            if (year == null)
+            if(year == null)
                 return null;
 
             List<double?> subjects = _context.Predmets
                 .Include(s => s.Godina)
-                .Where(s => s.Godina.Naziv.ToLower() == year.Naziv.ToLower())
+                .AsEnumerable()
+                .Where(s => year.Predmets.Any(p => p.Naziv.ToLower() == s.Naziv.ToLower()))
                 .Select(s => s.Prosjek)
                 .ToList();
 
