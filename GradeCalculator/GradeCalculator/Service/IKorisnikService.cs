@@ -3,8 +3,9 @@ using GradeCalculator.ViewModels;
 
 namespace GradeCalculator.Service
 {
-    public interface IKorisnikQueryable
+    public interface IKorisnikService
     {
+        void RemoveUser(int id);
         IEnumerable<ShowKorisnikVM> GetAllUsers();
         Korisnik GetUser(int id);
         bool IsUsernameTaken(string username);

@@ -15,10 +15,10 @@ namespace GradeCalculator.Controllers
     {
         private readonly PiGradeCalculatorContext _context;
         private readonly StatistikaService _statistikaService;
-        private readonly KorisnikService _korisnikService;
+        private readonly IKorisnikService _korisnikService;
         private readonly IKorisnikAdapter _korisnikAdapter;
 
-        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService, KorisnikService korisnikService, IKorisnikAdapter korisnikAdapter)
+        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService, IKorisnikService korisnikService, IKorisnikAdapter korisnikAdapter)
         {
             _context = context;
             _statistikaService = statistikaService;

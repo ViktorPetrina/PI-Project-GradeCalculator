@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GradeCalculator.Service
 {
-    public class KorisnikService : IKorisnikManagable,IKorisnikQueryable
+    public class KorisnikService : IKorisnikService
     {
         private readonly PiGradeCalculatorContext _context;
+
+        public KorisnikService() { }
 
         public KorisnikService(PiGradeCalculatorContext context) 
         {
