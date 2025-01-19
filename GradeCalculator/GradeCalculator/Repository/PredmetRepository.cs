@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GradeCalculator.Repository
 {
+    // repository
     public class PredmetRepository : IRepository<Predmet>
     {
         private readonly PiGradeCalculatorContext _context;

@@ -3,11 +3,13 @@ using GradeCalculator.Interfaces;
 using GradeCalculator.Models;
 using GradeCalculator.Repository;
 using GradeCalculator.Service;
+using GradeCalculator.Utilities;
 using GradeCalculator.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Composition;
 using System.Text;
 
 // TODO:
@@ -21,7 +23,6 @@ namespace GradeCalculator.Controllers
         private const string YEAR_EXISTS_ERROR = "Vec postoji godina sa istim nazivom";
 
         private readonly PiGradeCalculatorContext _context;
-        // Dependency Inversion - IRepository - GodinaRepository
         private readonly IRepository<Godina> _godinaRepo;
         private readonly IRepository<Predmet> _subjectRepo;
         private readonly IMapper _mapper;
@@ -29,13 +30,13 @@ namespace GradeCalculator.Controllers
 
         public GodinaController(
             PiGradeCalculatorContext context,
-            IRepository<Godina> godinaRepo,
             IRepository<Predmet> subjectRepo,
+            IRepository<Godina> yearRepo,
             IMapper mapper, 
             LogService logService)
         {
             _context = context;
-            _godinaRepo = godinaRepo;
+            _godinaRepo = yearRepo;
             _subjectRepo = subjectRepo;
             _mapper = mapper;
             _logService = logService;
@@ -66,14 +67,9 @@ namespace GradeCalculator.Controllers
         {
             var years = _godinaRepo.GetAll().Where(g => g.KorisnikId == id);
 
-            var json = JsonConvert.SerializeObject(years);
-            var bytes = Encoding.UTF8.GetBytes(json);
-            var download = new FileContentResult(bytes, "application/json")
-            {
-                FileDownloadName = "ocjene.json"
-            };
+            var exportHelper = ExportHelperFactory.GetJsonExportHelper();
 
-            return download;
+            return exportHelper.GetDownload(years);
         }
 
         public ActionResult ImportData()
@@ -90,16 +86,13 @@ namespace GradeCalculator.Controllers
                 return View(); 
             }
 
-            using (var stream = new StreamReader(file.OpenReadStream()))
-            {
-                var json = stream.ReadToEnd();
-                var years = JsonConvert.DeserializeObject<List<Godina>>(json);
+            var fileImporter = new FileImporterBuilder()
+                .SetImportFile(file)
+                .SetRepository(_godinaRepo)
+                .SetImportFileType(FileType.Json)
+                .Build();
 
-                if (years != null && years is List<Godina>)
-                {
-                    years.ForEach(y => _godinaRepo.Add(y));
-                }
-            }
+            fileImporter.ImportFile();
 
             return RedirectToAction(nameof(Index));
         }
