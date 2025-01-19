@@ -122,9 +122,15 @@ namespace GradeCalculator.Controllers
                 if (!ModelState.IsValid)
                     return View();
                 if (_korisnikService.IsEmailTaken(userVm.Email)) 
+                {
+                    ModelState.AddModelError("Email", "Email is already taken");
                     return View();
-                if (_korisnikService.IsUsernameTaken(userVm.UserName)) 
+                } 
+                if (_korisnikService.IsUsernameTaken(userVm.UserName))
+                {
+                    ModelState.AddModelError("UserName", "Username is already taken");
                     return View();
+                }
 
                 var roleName = userVm.IsAdmin ? "admin" : "basic";
                 var factory = KorisnikFactory.GetKorisnik(roleName);
