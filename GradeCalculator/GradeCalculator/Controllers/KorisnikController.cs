@@ -96,7 +96,12 @@ namespace GradeCalculator.Controllers
         [HttpPut]
         public ActionResult ChangePassword(int id, [FromBody] ChangePasswordVM passwordVm)
         {
-            var user = _context.Korisniks.First(p => p.Idkorisnik == id);
+            var user = _context.Korisniks.FirstOrDefault(p => p.Idkorisnik == id);
+
+            if (user == null)
+                return NotFound();
+            if (passwordVm.NewPassword != passwordVm.ConfirmPassword)
+                return BadRequest();
 
             user.LozinkaSalt = PasswordProvider.Instance.GetSalt();
             user.LozinkaHash = PasswordProvider.Instance.GetHash(passwordVm.NewPassword, user.LozinkaSalt);
@@ -162,6 +167,13 @@ namespace GradeCalculator.Controllers
         {
             try
             {
+                var user = _korisnikService.GetUser(id);
+                if (user == null)
+                {
+                    ModelState.AddModelError("User", "User not found");
+                    return View(userVm);
+                }
+
                 _korisnikService.RemoveUser(id);
 
                 return RedirectToAction(nameof(Index));

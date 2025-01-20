@@ -69,8 +69,8 @@ namespace GradeCalculatorTest
         {
             var result = _controller.Details(1);
 
-            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Contains("Could not find user", notFoundResult.Value.ToString());
+            var viewResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Contains("Could not find user", viewResult.Value.ToString());
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace GradeCalculatorTest
         [Fact]
         public void ChangePassword_Valid()
         {
-            var passwordVm = new ChangePasswordVM { NewPassword = "CarobnaRijec" };
+            var passwordVm = new ChangePasswordVM { NewPassword = "CarobnaRijec", ConfirmPassword = "CarobnaRijec" };
             var fakeUser = new Korisnik { Idkorisnik = 1, KorisnickoIme = "Testomir", Eposta = "test@mir.com", LozinkaHash = "1TcHBkOuqki6BoFGvoP0uLbGJYgBPN0uLhZsf9YIFGg=", LozinkaSalt = "Y5OQpJe7XffpVmh6k3TCCg==" };
             var korisniks = new List<Korisnik> { fakeUser };
             _mockContext.Setup(c => c.Korisniks).Returns(MockDbSetFromList(korisniks));
@@ -127,6 +127,30 @@ namespace GradeCalculatorTest
             var result = _controller.ChangePassword(1, passwordVm);
 
             Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public void ChangePassword_Invalid_DifferentPasswords()
+        {
+            var passwordVm = new ChangePasswordVM { NewPassword = "CarobnaRijec", ConfirmPassword = "MolimTeRadi" };
+            var fakeUser = new Korisnik { Idkorisnik = 1, KorisnickoIme = "Testomir", Eposta = "test@mir.com", LozinkaHash = "1TcHBkOuqki6BoFGvoP0uLbGJYgBPN0uLhZsf9YIFGg=", LozinkaSalt = "Y5OQpJe7XffpVmh6k3TCCg==" };
+            var korisniks = new List<Korisnik> { fakeUser };
+            _mockContext.Setup(c => c.Korisniks).Returns(MockDbSetFromList(korisniks));
+
+            var result = _controller.ChangePassword(1, passwordVm);
+
+            Assert.IsType<BadRequestResult>(result);
+        }
+
+        [Fact]
+        public void ChangePassword_Invalid_UserNotFound()
+        {
+            var passwordVm = new ChangePasswordVM { NewPassword = "CarobnaRijec", ConfirmPassword = "CarobnaRijec" };
+            _mockContext.Setup(c => c.Korisniks).Returns(MockDbSetFromList(new List<Korisnik>()));
+
+            var result = _controller.ChangePassword(999999, passwordVm);
+
+            Assert.IsType<NotFoundResult>(result);
         }
 
         [Fact]
@@ -200,6 +224,19 @@ namespace GradeCalculatorTest
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Null(redirectToActionResult.ControllerName);
             Assert.Equal("Index", redirectToActionResult.ActionName);
+        }
+
+        [Fact]
+        public void Delete_Invalid()
+        {
+            var userVm = new ShowKorisnikVM { UserName = "Testomir", Email = "test@mir.com" };
+            _mockKorisnikService.Setup(s => s.GetUser(It.IsAny<int>())).Returns((Korisnik)null);
+
+            var result = _controller.Delete(999999, userVm);
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal(userVm, viewResult.Model);
+            Assert.True(_controller.ModelState.ContainsKey("User"));
         }
 
         private DbSet<T> MockDbSetFromList<T>(List<T> sourceList) where T : class
