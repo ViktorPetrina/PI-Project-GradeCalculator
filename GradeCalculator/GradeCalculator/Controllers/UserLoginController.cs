@@ -49,7 +49,7 @@ namespace GradeCalculator.Controllers
                 ModelState.AddModelError("", "Invalid username or password");
                 return View();
             }
-            var b64hash = PasswordProvider.GetHash(model.Password, postojeciKorisnik.LozinkaSalt);
+            var b64hash = PasswordProvider.Instance.GetHash(model.Password, postojeciKorisnik.LozinkaSalt);
             if (b64hash != postojeciKorisnik.LozinkaHash)
             {
                 ModelState.AddModelError("", "Invalid username or password");
@@ -112,8 +112,8 @@ namespace GradeCalculator.Controllers
                 if (_context.Korisniks.Any(x => x.KorisnickoIme.Equals(trimmedUsername)))
                     return BadRequest($"Username {trimmedUsername} already exists");
 
-                var b64salt = PasswordProvider.GetSalt();
-                var b64hash = PasswordProvider.GetHash(model.Password, b64salt);
+                var b64salt = PasswordProvider.Instance.GetSalt();
+                var b64hash = PasswordProvider.Instance.GetHash(model.Password, b64salt);
 
                 var korisnik = new Korisnik
                 {

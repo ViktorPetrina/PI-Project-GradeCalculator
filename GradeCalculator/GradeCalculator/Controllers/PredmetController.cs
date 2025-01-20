@@ -90,10 +90,12 @@ namespace GradeCalculator.Controllers
                             .Select(o => o.Vrijednost)
                             .ToList();
 
-            if (subject == null)
+            if(subject == null)
                 return null;
 
-            return Math.Round((double)grades.Average(), 2, MidpointRounding.AwayFromZero);
+            double avg = Math.Round((double)grades.Average(), 2, MidpointRounding.AwayFromZero);
+
+            return avg;
         }
 
         public ActionResult AddGrade(int subjectId)

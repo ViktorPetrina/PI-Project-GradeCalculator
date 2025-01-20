@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GradeCalculator.Service
 {
-    public class KorisnikService : IKorisnikManagable,IKorisnikQueryable
+    public class KorisnikService : IKorisnikService
     {
         private readonly PiGradeCalculatorContext _context;
+
+        public KorisnikService() { }
 
         public KorisnikService(PiGradeCalculatorContext context) 
         {
@@ -26,19 +28,12 @@ namespace GradeCalculator.Service
             }).ToList();
         }
 
-        public ShowKorisnikVM GetUserDetails(int id)
+        public Korisnik GetUser(int id)
         {
             var user = _context.Korisniks.Include(u => u.Uloga).FirstOrDefault(u => u.Idkorisnik == id);
             if (user == null) return null;
 
-            return new ShowKorisnikVM
-            {
-                Id = user.Idkorisnik,
-                UserName = user.KorisnickoIme,
-                Email = user.Eposta,
-                TotalGrade = user.UkupnaOcjena,
-                RoleName = user.Uloga.Naziv
-            };
+            return user;
         }
 
         public bool IsEmailTaken(string email)
@@ -49,12 +44,6 @@ namespace GradeCalculator.Service
         public bool IsUsernameTaken(string username)
         {
             return _context.Korisniks.Any(u => u.KorisnickoIme == username);
-        }
-
-        public void AddUser(Korisnik user)
-        {
-            _context.Korisniks.Add(user);
-            _context.SaveChanges();
         }
 
         public void RemoveUser(int id)

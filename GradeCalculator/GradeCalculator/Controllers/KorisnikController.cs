@@ -5,6 +5,9 @@ using GradeCalculator.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GradeCalculator.Utilities;
+using GradeCalculator.Factory;
+using GradeCalculator.Adapter;
+using GradeCalculator.Builder;
 
 namespace GradeCalculator.Controllers
 {
@@ -12,16 +15,16 @@ namespace GradeCalculator.Controllers
     {
         private readonly PiGradeCalculatorContext _context;
         private readonly StatistikaService _statistikaService;
-        private readonly KorisnikService _korisnikService;
+        private readonly IKorisnikService _korisnikService;
+        private readonly IKorisnikAdapter _korisnikAdapter;
 
-        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService, KorisnikService korisnikService)
+        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService, IKorisnikService korisnikService, IKorisnikAdapter korisnikAdapter)
         {
             _context = context;
             _statistikaService = statistikaService;
             _korisnikService = korisnikService;
+            _korisnikAdapter = korisnikAdapter;
         }
-
-        private const int REGULAR_USER_ID = 1;
 
         // GET: KorisnikController
         public ActionResult Index()
@@ -33,20 +36,18 @@ namespace GradeCalculator.Controllers
 
         public ActionResult Details(int id)
         {
-            var user = _korisnikService.GetUserDetails(id);
+            var user = _korisnikService.GetUser(id);
             if (user == null)
             {
                 return NotFound($"Could not find user with id {id}");
             }
 
-            var userVm = new ShowKorisnikVM
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                TotalGrade = user.TotalGrade,
-                RoleName = user.RoleName
-            };
+            var userVm = new KorisnikBuilder()
+                        .SetId(user.Idkorisnik)
+                        .SetUserName(user.KorisnickoIme)
+                        .SetEmail(user.Eposta)
+                        .SetTotalGrade(user.UkupnaOcjena)
+                        .Build();
 
             return View(userVm);
         }
@@ -56,20 +57,13 @@ namespace GradeCalculator.Controllers
             int userId = ProfileUtils.GetLoggedInUserId();
             ViewBag.UserID = userId;
 
-            var user = _korisnikService.GetUserDetails(userId);
+            var user = _korisnikService.GetUser(userId);
             if (user == null)
             {
                 return NotFound($"Could not find user you're looking for");
             }
 
-            var userVm = new ShowKorisnikVM
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                TotalGrade = user.TotalGrade,
-                RoleName = user.RoleName
-            };
+            var userVm = _korisnikAdapter.Adapt(user);
 
             return View(userVm);
         }
@@ -102,10 +96,15 @@ namespace GradeCalculator.Controllers
         [HttpPut]
         public ActionResult ChangePassword(int id, [FromBody] ChangePasswordVM passwordVm)
         {
-            var user = _context.Korisniks.First(p => p.Idkorisnik == id);
+            var user = _context.Korisniks.FirstOrDefault(p => p.Idkorisnik == id);
 
-            user.LozinkaSalt = PasswordProvider.GetSalt();
-            user.LozinkaHash = PasswordProvider.GetHash(passwordVm.NewPassword, user.LozinkaSalt);
+            if (user == null)
+                return NotFound();
+            if (passwordVm.NewPassword != passwordVm.ConfirmPassword)
+                return BadRequest();
+
+            user.LozinkaSalt = PasswordProvider.Instance.GetSalt();
+            user.LozinkaHash = PasswordProvider.Instance.GetHash(passwordVm.NewPassword, user.LozinkaSalt);
 
             _context.SaveChanges();
 
@@ -128,21 +127,19 @@ namespace GradeCalculator.Controllers
                 if (!ModelState.IsValid)
                     return View();
                 if (_korisnikService.IsEmailTaken(userVm.Email)) 
-                    return View();
-                if (_korisnikService.IsUsernameTaken(userVm.UserName)) 
-                    return View();
-
-                var b64salt = PasswordProvider.GetSalt();
-                var b64hash = PasswordProvider.GetHash(userVm.Password, b64salt);
-
-                var user = new Korisnik
                 {
-                    KorisnickoIme = userVm.UserName,
-                    Eposta = userVm.Email,
-                    LozinkaHash = b64hash,
-                    LozinkaSalt = b64salt,
-                    UlogaId = REGULAR_USER_ID
-                };
+                    ModelState.AddModelError("Email", "Email is already taken");
+                    return View();
+                } 
+                if (_korisnikService.IsUsernameTaken(userVm.UserName))
+                {
+                    ModelState.AddModelError("UserName", "Username is already taken");
+                    return View();
+                }
+
+                var roleName = userVm.IsAdmin ? "admin" : "basic";
+                var factory = KorisnikFactory.GetKorisnik(roleName);
+                var user = factory.CreateUser(userVm);
 
                 _context.Add(user);
                 _context.SaveChanges();
@@ -158,13 +155,8 @@ namespace GradeCalculator.Controllers
         // GET: KorisnikController/Delete/5
         public ActionResult Delete(int id)
         {
-            var user = _korisnikService.GetUserDetails(id);
-            var userVm = new ShowKorisnikVM
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email
-            };
+            var user = _korisnikService.GetUser(id);
+            var userVm = _korisnikAdapter.Adapt(user);
             return View(userVm);
         }
 
@@ -175,6 +167,13 @@ namespace GradeCalculator.Controllers
         {
             try
             {
+                var user = _korisnikService.GetUser(id);
+                if (user == null)
+                {
+                    ModelState.AddModelError("User", "User not found");
+                    return View(userVm);
+                }
+
                 _korisnikService.RemoveUser(id);
 
                 return RedirectToAction(nameof(Index));
