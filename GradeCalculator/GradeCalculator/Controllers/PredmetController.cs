@@ -7,18 +7,22 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
+//TODO:
+// maknuti uniqe imena predmeta u bazi
+// popraviti ne prikazivanje imena godine nakon brisanja predmeta
+
 namespace GradeCalculator.Controllers
 {
     public class PredmetController : Controller
     {
-        private readonly IRepository<Ocjena> _gradeRepo;
+        private readonly IReadAllRepository<Ocjena> _gradeRepo;
         private readonly IRepository<Predmet> _subjectRepo;
         private readonly IRepository<Godina> _yearRepo;
         private readonly IMapper _mapper;
         private readonly StatistikaService _statistikaService;
         private readonly LogService _logService;
         public PredmetController(
-            IRepository<Ocjena> gradeRepo,
+            IReadAllRepository<Ocjena> gradeRepo,
             IRepository<Predmet> subjectRepo, 
             IRepository<Godina> yearRepo, 
             IMapper mapper, 
@@ -56,15 +60,52 @@ namespace GradeCalculator.Controllers
         public ActionResult CalculateAverage(int id)
         {
             var subject = _subjectRepo.Get(id);
-            var grades = (_gradeRepo as OcijenaRepository)?.GetBySubject(id);
+            var grades = (_gradeRepo as ComplexOcjenaRepository)?.GetBySubject(id);
 
-            if (subject != null)
+            if (subject != null && grades != null)
             {
-                subject.Prosjek = grades?.Average(g => g.Vrijednost);
+                subject.Prosjek = Math.Round(grades.Average(g => g.Vrijednost), 1);
                 _subjectRepo.Modify(id, subject);
             }
 
-            return RedirectToAction("Details", new { id = id});
+            return RedirectToAction("Details", new { id = id });
+        }
+
+        public ActionResult AddGrade(int subjectId)
+        {
+            ViewBag.SubjectId = subjectId;
+            var gradeVm = new OcjenaVM();
+
+            ViewBag.PredmetListItems = GetSubjectListItems().Where(p => p.Value.Equals(subjectId.ToString()));
+
+            return View(gradeVm);
+        }
+
+        [HttpPost]
+        public ActionResult AddGrade(OcjenaVM gradeVm)
+        {
+            try
+            {
+                var subject = _subjectRepo.Get(gradeVm.PredmetId);
+
+                if (subject != null)
+                {
+                    subject.Ocjenas.Add(new Ocjena
+                    {
+                        PredmetId = gradeVm.PredmetId,
+                        Vrijednost = gradeVm.Vrijednost
+                    });
+                    _subjectRepo.Modify(gradeVm.PredmetId, subject); 
+                }
+                
+                _logService.AddLog("Korisnik spremio ocjenu u bazu.");
+
+                return RedirectToAction("Details", new { id = gradeVm.PredmetId });
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         // GET: PredmetController/Details/5
@@ -81,7 +122,7 @@ namespace GradeCalculator.Controllers
         // GET: PredmetController/Create
         public ActionResult Create()
         {
-            ViewBag.GodineListItems = GetYears();
+            ViewBag.GodineListItems = GetYearListItems();
 
             var subject = new PredmetVM();
             
@@ -94,8 +135,11 @@ namespace GradeCalculator.Controllers
         public ActionResult Create(PredmetVM subjectVm)
         {
             try
-            {
-                if (_subjectRepo.GetAll().Any(p => p.Naziv == subjectVm.Naziv))
+            {   
+                if (_subjectRepo
+                    .GetAll()
+                    .Where(s => s.Idpredmet.Equals(subjectVm.Idpredmet))
+                    .Any(p => p.Naziv == subjectVm.Naziv))
                 {
                     ModelState.AddModelError("", "Vec postoji predmet sa istim nazivom");
 
@@ -122,7 +166,7 @@ namespace GradeCalculator.Controllers
                 var subject = _subjectRepo.Get(id);
                 var subjectVm = _mapper.Map<PredmetVM>(subject);
 
-                ViewBag.GodineListItems = GetYears();
+                ViewBag.GodineListItems = GetYearListItems();
 
                 return View(subjectVm);
             }
@@ -143,7 +187,7 @@ namespace GradeCalculator.Controllers
 
                 _subjectRepo.Modify(id, subject);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("SubjectsByYear", new { id = subjectVm.GodinaId });
             }
             catch
             {
@@ -168,7 +212,7 @@ namespace GradeCalculator.Controllers
             {
                 _subjectRepo.Remove(id);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("SubjectsByYear", new { id = id });
             }
             catch
             {
@@ -176,13 +220,23 @@ namespace GradeCalculator.Controllers
             }
         }
 
-        public IEnumerable<SelectListItem> GetYears()
+        public IEnumerable<SelectListItem> GetYearListItems()
         {
             return _yearRepo.GetAll()
                     .Select(y => new SelectListItem
                     {
                         Text = $"{y.Naziv}",
                         Value = y.Idgodina.ToString()
+                    });
+        }
+
+        public IEnumerable<SelectListItem> GetSubjectListItems()
+        {
+            return _subjectRepo.GetAll()
+                    .Select(p => new SelectListItem
+                    {
+                        Text = $"{p.Naziv}",
+                        Value = p.Idpredmet.ToString()
                     });
         }
 
