@@ -6,10 +6,12 @@ namespace GradeCalculator.AutoMapper
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile() 
-        { 
+        public MappingProfile()
+        {
             CreateMap<Predmet, PredmetVM>().ReverseMap();
             CreateMap<Godina, GodinaVM>().ReverseMap();
+            CreateMap<Ocjena, OcjenaVM>().ReverseMap();
         }
     }
+
 }

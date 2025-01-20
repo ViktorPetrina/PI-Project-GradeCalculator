@@ -1,6 +1,54 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-    <h1>Index</h1>
+﻿@model IEnumerable<GradeCalculator.ViewModels.ShowKorisnikVM>
+@section Styles {
+    <link rel="stylesheet" href="~/css/stylist.css" />
 }
+
+<h1>Korisnici</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-outline-primary">Dodaj korinika</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalGrade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoleName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalGrade)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoleName)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        @Html.ActionLink("Izbriši", "Delete", new { id = item.Id }, new { @class = "btn btn-outline-danger" })
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

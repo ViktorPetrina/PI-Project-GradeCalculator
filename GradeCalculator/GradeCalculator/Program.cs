@@ -1,3 +1,4 @@
+using GradeCalculator.Adapter;
 using GradeCalculator.AutoMapper;
 using GradeCalculator.Models;
 using GradeCalculator.Repository;
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<PiGradeCalculatorContext>(options => {
 });
 builder.Services.AddScoped<StatistikaService>();
 builder.Services.AddScoped<LogService>();
+builder.Services.AddScoped<IKorisnikService, KorisnikService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -23,12 +25,15 @@ builder.Services.AddScoped<IReadAllRepository<Ocjena>, ComplexOcjenaRepository>(
 builder.Services.AddScoped<IRepository<Predmet>, PredmetRepository>();
 builder.Services.AddScoped<IRepository<Godina> ,GodinaRepository>();
 
+builder.Services.AddScoped<IKorisnikAdapter, KorisnikAdapter>();
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(10);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });//mico: za session
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {

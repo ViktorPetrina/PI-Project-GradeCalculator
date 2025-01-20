@@ -1,4 +1,5 @@
 ﻿using GradeCalculator.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GradeCalculator.Repository
 {
@@ -14,21 +15,21 @@ namespace GradeCalculator.Repository
         public Godina? Add(Godina value)
         {
             _context.Godinas.Add(value);
-            _context.SaveChanges();
+            CommitChanges();
 
             return value;
         }
 
         public Godina? Get(int id)
         {
-            var years = _context.Godinas;
+            var years = GetGodinas();
 
             return years.FirstOrDefault(p => p.Idgodina == id);
         }
 
         public IEnumerable<Godina> GetAll()
         {
-            return _context.Godinas;
+            return GetGodinas();
         }
 
         public Godina? Modify(int id, Godina value)
@@ -42,7 +43,7 @@ namespace GradeCalculator.Repository
                 year.KorisnikId = value.KorisnikId;
             }
 
-            _context.SaveChanges();
+            CommitChanges();
 
             return year;
         }
@@ -54,10 +55,22 @@ namespace GradeCalculator.Repository
             if (year != null)
             {
                 _context.Godinas.Remove(year);
-                _context.SaveChanges();
+                CommitChanges();
             }
 
             return year;
+        }
+
+        private IEnumerable<Godina> GetGodinas()
+        {
+            return _context.Godinas
+                .Include(g => g.Predmets)
+                .ThenInclude(p => p.Ocjenas);
+        }
+
+        private void CommitChanges()
+        {
+            _context.SaveChanges();
         }
     }
 }

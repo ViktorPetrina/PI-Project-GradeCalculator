@@ -1,0 +1,20 @@
+﻿@model Microsoft.AspNetCore.Http.IFormFile
+
+@{
+    ViewData["Title"] = "Import data";
+}
+
+<h1>Uvoz podataka</h1>
+
+<form asp-controller="Godina" asp-action="ImportData" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <input type="file" name="file" class="form-control"/>
+    </div>
+    <div class="mb-3">
+        <input type="submit" value="Uvezi podatke" class="btn btn-primary"/>
+    </div>
+    <span class="text-success">
+
+    </span>
+</form>
+ 
