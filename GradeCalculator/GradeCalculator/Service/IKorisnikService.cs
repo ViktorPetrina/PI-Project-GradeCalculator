@@ -1,11 +1,13 @@
-﻿using GradeCalculator.ViewModels;
+﻿using GradeCalculator.Models;
+using GradeCalculator.ViewModels;
 
 namespace GradeCalculator.Service
 {
-    public interface IKorisnikQueryable
+    public interface IKorisnikService
     {
+        void RemoveUser(int id);
         IEnumerable<ShowKorisnikVM> GetAllUsers();
-        ShowKorisnikVM GetUserDetails(int id);
+        Korisnik GetUser(int id);
         bool IsUsernameTaken(string username);
         bool IsEmailTaken(string email);
     }

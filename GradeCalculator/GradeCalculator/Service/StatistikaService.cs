@@ -10,6 +10,8 @@ namespace GradeCalculator.Service
     {
         private readonly PiGradeCalculatorContext _context;
 
+        public StatistikaService() { }
+
         public StatistikaService(PiGradeCalculatorContext context)
         {
             _context = context;

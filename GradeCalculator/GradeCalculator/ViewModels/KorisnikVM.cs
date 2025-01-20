@@ -21,10 +21,16 @@ namespace GradeCalculator.ViewModels
         [StringLength(256, MinimumLength = 8, ErrorMessage = "Password should be at least 8 characters long")]
         public string Password { get; set; }
 
+        [Display(Name = "Potvrdi lozinku")]
+        [Required(ErrorMessage = "Confirmation Password is required")]
+        [StringLength(256, MinimumLength = 8, ErrorMessage = "Password should be at least 8 characters long")]
+        [Compare("Password", ErrorMessage = "Passwords do not match")]
+        public string ConfirmPassword { get; set; }
+
         [Display(Name = "Ukupna ocjena")]
         public double TotalGrade { get; set; }
 
-        [Display(Name = "Uloga")]
-        public int RoleId { get; set; }
+        [Display(Name = "Admin")]
+        public bool IsAdmin { get; set; }
     }
 }

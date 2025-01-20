@@ -1,6 +1,13 @@
 ﻿@model IEnumerable<GradeCalculator.ViewModels.ShowKorisnikVM>
+@section Styles {
+    <link rel="stylesheet" href="~/css/stylist.css" />
+}
 
 <h1>Korisnici</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-outline-primary">Dodaj korinika</a>
+</p>
 
 <table class="table">
     <thead>
