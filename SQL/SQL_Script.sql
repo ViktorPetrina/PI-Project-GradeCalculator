@@ -23,15 +23,15 @@ go
 
 create table Godina (
     IDGodina int primary key identity (1, 1),
-    Naziv nvarchar(50) unique not null,
-	Prosjek float,
+    Naziv nvarchar(50) not null,
+	Prosjek float default 0 not null,
 	KorisnikID int foreign key (KorisnikID) references Korisnik(IDKorisnik)
 );
 go
 
 create table Predmet (
     IDPredmet int primary key identity (1, 1),
-    Naziv nvarchar(50) unique not null,
+    Naziv nvarchar(50) not null,
 	Prosjek float,
 	GodinaID int foreign key (GodinaID) references Godina(IDGodina)
 );
@@ -39,13 +39,13 @@ go
 
 create table Ocjena (
     IDOcjena int primary key identity (1, 1),
-    Vrijednost int not null,
+    Vrijednost int,
 	PredmetID int foreign key (PredmetID) references Predmet(IDPredmet)
 );
 go
 
 create table [Log] (
-    IDOcjena int primary key identity (1, 1),
+    IDLog int primary key identity (1, 1),
     Opis    nvarchar(100) not null,
     Vrijeme datetime not null
 );

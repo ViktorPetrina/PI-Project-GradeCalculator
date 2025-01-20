@@ -1,14 +1,17 @@
-﻿@model GradeCalculator.ViewModels.KorisnikVM
+﻿@model GradeCalculator.ViewModels.ShowKorisnikVM
+@section Styles {
+    <link rel="stylesheet" href="~/css/stylist.css" />
+}
 
 <div id="profilePlaceholder" class="details">
     <partial name="_ProfilePartial"></partial>
 
-    <button id="ajaxUpdate" hidden class="btn btn-primary mt-3">Refresh</button>
     <button id="ajaxEdit" class="btn btn-primary">Edit</button>
     <button id="ajaxChangePassword" class="btn btn-warning">Change password</button>
     <a id="return" type="button" class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to List</a>
 </div>
 <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+<a id="delete" type="button" class="btn btn-danger" asp-controller="Korisnik" asp-action="Delete" asp-route-id="@ViewBag.UserID">Izbriši račun</a>
 
 <div class="modal fade" id="AjaxEditModal" tabindex="-1">
     <div class="modal-dialog">
@@ -70,18 +73,6 @@
     <script>
         const modelId = "@Model.Id";
 
-        $("#ajaxUpdate").click(() => {
-            $.ajax({
-                url: `/Korisnik/GetProfileData/${modelId}`,
-                method: "GET"
-            })
-                .done((data) => {
-                    $("#UserName").text(data.userName);
-                    $("#Email").text(data.eposta);
-                    $("#TotalGrade").text(data.ukupnaOcjena);
-                });
-        });
-
         const ajaxEditModalEl = $("#AjaxEditModal")[0];
         const ajaxEditModal = new bootstrap.Modal(ajaxEditModalEl);
 
@@ -98,7 +89,6 @@
         });
 
         $("#SaveProfileButton").click(() => {
-
             const profile = {
                 email: $("#EmailInput").val(),
                 userName: $("#UserNameInput").val(),
@@ -112,11 +102,11 @@
             })
                 .done((data) => {
                     ajaxEditModal.hide();
-                    $("#ajaxUpdate").trigger("click");
+                    location.reload(true);
                 })
                 .fail(() => {
                     alert("Couldn't update profile");
-                })
+                });
         });
 
         const passwordModalEl = $("#AjaxChangePasswordModal")[0];
@@ -166,8 +156,6 @@
                 })
         });
         
-
-        
         $.ajax({
             url: `/Korisnik/GetDataPoints`,
             method: "GET"
@@ -198,7 +186,7 @@
                 
             })
             .fail((xhr, status, error) => {
-                console.error("AJAX Error:", status, error); // Debugging: Log errors
+                console.error("AJAX Error:", status, error);
                 alert("Couldn't load chart data");
             });
             

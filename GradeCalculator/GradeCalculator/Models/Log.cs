@@ -5,7 +5,7 @@ namespace GradeCalculator.Models;
 
 public partial class Log
 {
-    public int IdLog { get; set; }
+    public int Idlog { get; set; }
 
     public string Opis { get; set; } = null!;
 

@@ -1,0 +1,28 @@
+﻿p {
+    margin: 5px;
+    margin-bottom: 15px;
+    padding: 5px;
+}
+
+.divs, .form-group {
+    margin-bottom: 20px;
+}
+
+input {
+    margin-left: 15px;
+}
+
+button {
+    margin-right: 25px;
+}
+
+.details {
+    margin-top: 30px;
+    margin-bottom: 40px;
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-radius: 10px;
+    padding: 10px;
+}

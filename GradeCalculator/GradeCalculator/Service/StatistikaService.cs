@@ -10,6 +10,8 @@ namespace GradeCalculator.Service
     {
         private readonly PiGradeCalculatorContext _context;
 
+        public StatistikaService() { }
+
         public StatistikaService(PiGradeCalculatorContext context)
         {
             _context = context;
@@ -39,9 +41,7 @@ namespace GradeCalculator.Service
                     o => o.Key,
                     o => Math.Round((o.Count() / (double)brojOcjena) * 100, 2) 
                      );
-            return ocjenePercentage;
-
-            
+            return ocjenePercentage; 
         }
     }
 }
