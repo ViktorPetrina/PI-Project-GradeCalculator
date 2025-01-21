@@ -10,7 +10,6 @@ namespace GradeCalculator.Controllers
     {
         private readonly PiGradeCalculatorContext _context;
 
-
         public LogController(PiGradeCalculatorContext context)
         {
             _context = context;

@@ -17,7 +17,7 @@ builder.Services.AddDbContext<PiGradeCalculatorContext>(options => {
 });
 builder.Services.AddScoped<IStatistikaService,StatistikaService>();
 builder.Services.AddScoped<IUkupnaStatistika, StatistikaService>();
-builder.Services.AddSingleton<ILogService,LogService>();
+builder.Services.AddScoped<ILogService,LogService>();
 builder.Services.AddScoped<IKorisnikService, KorisnikService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));

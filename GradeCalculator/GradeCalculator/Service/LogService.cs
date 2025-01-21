@@ -9,38 +9,35 @@ namespace GradeCalculator.Service
     {
         
         private readonly IServiceProvider _serviceProvider;
+        private readonly PiGradeCalculatorContext _context;
 
-        public LogService() { }
-
-        public LogService(IServiceProvider serviceProvider)
+        public LogService(PiGradeCalculatorContext context)
         {
-            _serviceProvider = serviceProvider;
+            _context = context;
         }
 
         public void AddLog(string message)
         {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<PiGradeCalculatorContext>();
+            
+                
                 string prilagodeniOpis = "Log: " + message;
                 var log = new Log
                 {
                     Opis = prilagodeniOpis,
                     Vrijeme = DateTime.Now,
                 };
-                context.Logs.Add(log);
-                context.SaveChanges();
-            }
+                _context.Logs.Add(log);
+                _context.SaveChanges();
+            
         }
 
         public List<Log> GetLogsAsXML()
         {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<PiGradeCalculatorContext>();
+            
 
-                return context.Logs.ToList();
-            }
+
+                return _context.Logs.ToList();
+
         }
     }
 }
