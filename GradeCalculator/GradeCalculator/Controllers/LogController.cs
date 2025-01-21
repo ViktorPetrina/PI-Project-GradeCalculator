@@ -9,12 +9,11 @@ namespace GradeCalculator.Controllers
     public class LogController : Controller
     {
         private readonly PiGradeCalculatorContext _context;
-        private readonly ILogAdapter _adapter;
 
-        public LogController(PiGradeCalculatorContext context, ILogAdapter adapter)
+
+        public LogController(PiGradeCalculatorContext context, )
         {
             _context = context;
-            _adapter = adapter;
         }
 
         public IActionResult Details()
@@ -23,7 +22,7 @@ namespace GradeCalculator.Controllers
             var adaptedLogs = new List<ShowLogVM>();
             foreach (var log in logs)
             {
-                adaptedLogs.Add(_adapter.Adapt(log));
+                LogAdapter.Instance.Adapt(log);
 
             }
             return View(adaptedLogs);

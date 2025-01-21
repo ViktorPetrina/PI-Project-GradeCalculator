@@ -5,7 +5,11 @@ namespace GradeCalculator.Adapter
 {
     public class LogAdapter : ILogAdapter
     {
-        private static readonly LogAdapter Instance = new LogAdapter();
+        public static readonly LogAdapter Instance = new LogAdapter();
+        public LogAdapter()
+        {
+            
+        }
         public ShowLogVM Adapt(Log log)
         {
             return new ShowLogVM
