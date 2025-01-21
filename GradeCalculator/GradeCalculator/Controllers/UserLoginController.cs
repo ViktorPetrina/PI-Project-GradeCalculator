@@ -8,15 +8,16 @@ using GradeCalculator.Models;
 using Microsoft.EntityFrameworkCore;
 using GradeCalculator.Security;
 using GradeCalculator.Service;
+using Microsoft.AspNetCore.Identity;
 
 namespace GradeCalculator.Controllers
 {
     public class UserLoginController : Controller
     {
         private readonly PiGradeCalculatorContext _context;
-        private readonly LogService _logService;
+        private readonly ILogService _logService;
 
-        public UserLoginController(PiGradeCalculatorContext context, LogService logService)
+        public UserLoginController(PiGradeCalculatorContext context, ILogService logService)
         {
             _context = context;
             _logService = logService;
@@ -32,8 +33,8 @@ namespace GradeCalculator.Controllers
             {
                 ReturnUrl = returnUrl
             };
-
-            return View();
+            
+            return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -95,7 +96,7 @@ namespace GradeCalculator.Controllers
                 await HttpContext.SignOutAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme)
             ).GetAwaiter().GetResult();
-
+            _logService.AddLog($"Korisnik  se odjavio iz sustava");
             return View();
         }
         public IActionResult Register()
@@ -132,6 +133,7 @@ namespace GradeCalculator.Controllers
                 _logService.AddLog($"Korisnik sa ulogom {korisnik.UlogaId} se registrirao u sustav");
                 model.Id = korisnik.Idkorisnik;
                 return RedirectToAction("Index", "Home");
+
             }
             catch (Exception ex)
             {

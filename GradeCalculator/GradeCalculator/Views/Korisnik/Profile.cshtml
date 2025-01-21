@@ -10,7 +10,10 @@
     <button id="ajaxChangePassword" class="btn btn-warning">Change password</button>
     <a id="return" type="button" class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to List</a>
 </div>
-<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+@if (ViewBag.Role == 2)
+{
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+}
 <a id="delete" type="button" class="btn btn-danger" asp-controller="Korisnik" asp-action="Delete" asp-route-id="@ViewBag.UserID">Izbriši račun</a>
 
 <div class="modal fade" id="AjaxEditModal" tabindex="-1">

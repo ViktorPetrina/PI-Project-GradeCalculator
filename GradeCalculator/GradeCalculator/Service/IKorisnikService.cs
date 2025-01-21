@@ -10,5 +10,6 @@ namespace GradeCalculator.Service
         Korisnik GetUser(int id);
         bool IsUsernameTaken(string username);
         bool IsEmailTaken(string email);
+        Korisnik GetUserByName(string name);
     }
 }

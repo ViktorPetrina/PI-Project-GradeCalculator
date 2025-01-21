@@ -7,12 +7,12 @@ namespace GradeCalculator.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly LogService _logService;
+        
+        private readonly ILogService _logService;
 
-        public HomeController(ILogger<HomeController> logger, LogService logService)
+        public HomeController( ILogService logService)
         {
-            _logger = logger;
+            
             _logService = logService;
         }
 

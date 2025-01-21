@@ -15,8 +15,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<PiGradeCalculatorContext>(options => {
     options.UseSqlServer("name=ConnectionStrings:connection");
 });
-builder.Services.AddScoped<StatistikaService>();
-builder.Services.AddScoped<LogService>();
+builder.Services.AddScoped<IStatistikaService,StatistikaService>();
+builder.Services.AddScoped<IUkupnaStatistika, StatistikaService>();
+builder.Services.AddSingleton<ILogService,LogService>();
 builder.Services.AddScoped<IKorisnikService, KorisnikService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -26,10 +27,11 @@ builder.Services.AddScoped<IRepository<Predmet>, PredmetRepository>();
 builder.Services.AddScoped<IRepository<Godina> ,GodinaRepository>();
 
 builder.Services.AddScoped<IKorisnikAdapter, KorisnikAdapter>();
+builder.Services.AddSingleton<ILogAdapter,LogAdapter>();
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.IdleTimeout = TimeSpan.FromSeconds(1000);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });//mico: za session
