@@ -22,7 +22,7 @@ namespace GradeCalculator.Controllers
         private readonly IRepository<Predmet> _subjectRepo;
         private readonly IRepository<Godina> _yearRepo;
         private readonly IMapper _mapper;
-        private readonly StatistikaService _statistikaService;
+        private readonly IStatistikaService _statistikaService;
         private readonly LogService _logService;
         public PredmetController(
             PiGradeCalculatorContext context,
@@ -30,7 +30,7 @@ namespace GradeCalculator.Controllers
             IRepository<Predmet> subjectRepo, 
             IRepository<Godina> yearRepo, 
             IMapper mapper, 
-            StatistikaService statistikaService, 
+            IStatistikaService statistikaService, 
             LogService logService)
         {
             _context = context;

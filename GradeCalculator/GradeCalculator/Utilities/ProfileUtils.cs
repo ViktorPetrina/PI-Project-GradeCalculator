@@ -2,10 +2,10 @@
 {
     public class ProfileUtils
     {
-        public static int GetLoggedInUserId() 
+        public static string GetLoggedInUserId(HttpContext httpContext) 
         {
-            //var username = HttpContext.User.Identity.Name;
-            return 1;
+            var id= httpContext.User.Identity.Name;
+            return id;
         }
     }
 }

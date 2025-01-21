@@ -9,7 +9,7 @@ namespace GradeCalculator.Service
     public class StatistikaService : IStatistikaService, IUkupnaStatistika
     {
         private readonly PiGradeCalculatorContext _context;
-
+        
         public StatistikaService() { }
 
         public StatistikaService(PiGradeCalculatorContext context)

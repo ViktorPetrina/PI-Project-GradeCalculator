@@ -36,6 +36,14 @@ namespace GradeCalculator.Service
             return user;
         }
 
+        public Korisnik GetUserByName(string name)
+        {
+            var user = _context.Korisniks.Include(u => u.Uloga).FirstOrDefault(u => u.KorisnickoIme == name);
+            if (user == null) return null;
+
+            return user;
+        }
+
         public bool IsEmailTaken(string email)
         {
             return _context.Korisniks.Any(u => u.Eposta == email);
@@ -74,5 +82,6 @@ namespace GradeCalculator.Service
                 _context.Godinas.Remove(year);
             }
         }
+
     }
 }

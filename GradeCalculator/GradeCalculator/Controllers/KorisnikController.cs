@@ -14,11 +14,11 @@ namespace GradeCalculator.Controllers
     public class KorisnikController : Controller
     {
         private readonly PiGradeCalculatorContext _context;
-        private readonly StatistikaService _statistikaService;
+        private readonly IUkupnaStatistika _statistikaService;
         private readonly IKorisnikService _korisnikService;
         private readonly IKorisnikAdapter _korisnikAdapter;
 
-        public KorisnikController(PiGradeCalculatorContext context, StatistikaService statistikaService, IKorisnikService korisnikService, IKorisnikAdapter korisnikAdapter)
+        public KorisnikController(PiGradeCalculatorContext context, IUkupnaStatistika statistikaService, IKorisnikService korisnikService, IKorisnikAdapter korisnikAdapter)
         {
             _context = context;
             _statistikaService = statistikaService;
@@ -54,10 +54,17 @@ namespace GradeCalculator.Controllers
 
         public ActionResult Profile()
         {
-            int userId = ProfileUtils.GetLoggedInUserId();
-            ViewBag.UserID = userId;
+            string userName = ProfileUtils.GetLoggedInUserId(HttpContext);
+            var user = _korisnikService.GetUserByName(userName);
 
-            var user = _korisnikService.GetUser(userId);
+            if (user!=null)
+            {
+
+                ViewBag.UserID = user.Idkorisnik;
+                ViewBag.Rola= user.UlogaId;
+            }
+
+            
             if (user == null)
             {
                 return NotFound($"Could not find user you're looking for");
@@ -199,5 +206,6 @@ namespace GradeCalculator.Controllers
             
             return Json(dataPoints);
         }
+
     }
 }

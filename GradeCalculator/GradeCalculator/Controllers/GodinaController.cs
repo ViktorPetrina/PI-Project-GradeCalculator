@@ -25,14 +25,14 @@ namespace GradeCalculator.Controllers
         private readonly IRepository<Godina> _godinaRepo;
         private readonly IRepository<Predmet> _subjectRepo;
         private readonly IMapper _mapper;
-        private readonly LogService _logService;
+        private readonly ILogService _logService;
 
         public GodinaController(
             PiGradeCalculatorContext context,
             IRepository<Predmet> subjectRepo,
             IRepository<Godina> yearRepo,
             IMapper mapper, 
-            LogService logService)
+            ILogService logService)
         {
             _context = context;
             _godinaRepo = yearRepo;
@@ -57,7 +57,7 @@ namespace GradeCalculator.Controllers
             var years = _godinaRepo.GetAll().Where(g => g.KorisnikId == id);
 
             var exportHelper = ExportHelperFactory.GetJsonExportHelper();
-
+            _logService.AddLog($"Korisnik sa id {id} je preuzeo podatke");
             return exportHelper.GetDownload(years);
         }
 
