@@ -21,7 +21,9 @@ namespace GradeCalculator.Controllers
             var adaptedLogs = new List<ShowLogVM>();
             foreach (var log in logs)
             {
-                LogAdapter.Instance.Adapt(log);
+                
+                var adaptedLog = LogAdapter.Instance.Adapt(log);
+                adaptedLogs.Add(adaptedLog);
 
             }
             return View(adaptedLogs);
