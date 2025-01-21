@@ -39,7 +39,7 @@ namespace GradeCalculatorTest
                 mockSubjectRepo.Object,
                 mockYearRepo.Object,
                 mockMapper.Object,
-                new LogService(context));
+                new LogService());
         }
 
         [Fact]

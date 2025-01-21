@@ -9,7 +9,8 @@ namespace GradeCalculator.Service
     {
         
         private readonly IServiceProvider _serviceProvider;
-        
+
+        public LogService() { }
 
         public LogService(IServiceProvider serviceProvider)
         {
