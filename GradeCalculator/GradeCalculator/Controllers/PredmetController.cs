@@ -48,7 +48,7 @@ namespace GradeCalculator.Controllers
             var subjects = _subjectRepo.GetAll();
             var subjectVms = _mapper.Map<IEnumerable<PredmetVM>>(subjects);
 
-            return View(subjectVms);
+            return View(subjectVms);    
         }
 
         // GET: PredmetController/SubjectsByYear/5

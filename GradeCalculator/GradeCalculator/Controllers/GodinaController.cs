@@ -52,16 +52,6 @@ namespace GradeCalculator.Controllers
             return View(yearVms);
         }
 
-        // mozda maknuti details jer je nepotrebno ?
-        // GET: GodinaController/Details
-        public ActionResult Details(int id)
-        {
-            var year = _godinaRepo.Get(id);
-            var yearVm = _mapper.Map<GodinaVM>(year);
-
-            return View(yearVm);
-        }
-
         public ActionResult ExportData(int id)
         {
             var years = _godinaRepo.GetAll().Where(g => g.KorisnikId == id);
@@ -121,7 +111,7 @@ namespace GradeCalculator.Controllers
                 var year = _mapper.Map<Godina>(godinaVm);
                 year.KorisnikId = 1;
                 _godinaRepo.Add(year);
-                _logService.AddLog("Korisnik spremio godinu u bazu.");
+                //_logService.AddLog("Korisnik spremio godinu u bazu.");
 
                 return RedirectToAction(nameof(Index));
             }
@@ -134,27 +124,6 @@ namespace GradeCalculator.Controllers
         public ActionResult Subjects(int _id)
         {
             return RedirectToAction("SubjectsByYear", "Predmet", new {id = _id});
-        }
-
-        // GET: GodinaController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: GodinaController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
 
         // GET: GodinaController/Delete/5

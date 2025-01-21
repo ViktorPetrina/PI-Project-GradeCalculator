@@ -15,11 +15,11 @@ namespace GradeCalculator.Utilities
             return GetResult(bytes);
         }
 
-        protected abstract FileContentResult GetResult(byte[] bytes);
+        public abstract FileContentResult GetResult(byte[] bytes);
 
-        protected abstract byte[] ToBytes(string serialized);
+        public abstract byte[] ToBytes(string serialized);
 
-        protected abstract string Serialize(object value);
+        public abstract string Serialize(object value);
     }
 
     // singleton
@@ -38,7 +38,7 @@ namespace GradeCalculator.Utilities
             } 
         }
 
-        protected override FileContentResult GetResult(byte[] bytes)
+        public override FileContentResult GetResult(byte[] bytes)
         {
             return new FileContentResult(bytes, "application/json")
             {
@@ -46,12 +46,12 @@ namespace GradeCalculator.Utilities
             };
         }
 
-        protected override byte[] ToBytes(string serialized)
+        public override byte[] ToBytes(string serialized)
         {
             return Encoding.UTF8.GetBytes(serialized);
         }
 
-        protected override string Serialize(object value)
+        public override string Serialize(object value)
         {
             return JsonConvert.SerializeObject(value) ?? throw new Exception(FILE_IS_NOT_JSON_ERROR);
         }
